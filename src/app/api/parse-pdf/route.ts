@@ -12,11 +12,11 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const pdfParser = new PDFParser(null, 1);
+    const pdfParser = new PDFParser(null, true);
     
-    return new Promise((resolve, reject) => {
-      pdfParser.on("pdfParser_dataError", errData => {
-        resolve(NextResponse.json({ error: 'Failed to parse PDF', details: errData.parserError }, { status: 500 }));
+    return new Promise<NextResponse>((resolve, reject) => {
+      pdfParser.on("pdfParser_dataError", (errData: any) => {
+        resolve(NextResponse.json({ error: 'Failed to parse PDF', details: errData.parserError?.message || errData.message || 'Unknown error' }, { status: 500 }));
       });
 
       pdfParser.on("pdfParser_dataReady", pdfData => {
