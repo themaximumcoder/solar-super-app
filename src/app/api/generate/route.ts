@@ -29,6 +29,10 @@ export async function POST(req: Request) {
         getImage: async function(tagValue: string) {
             if (!tagValue || tagValue === '') return emptyPixel;
             try {
+                if (tagValue.startsWith('data:image/')) {
+                    const base64Data = tagValue.split(',')[1];
+                    return Buffer.from(base64Data, 'base64');
+                }
                 const response = await fetch(tagValue);
                 if (!response.ok) return emptyPixel;
                 const arrayBuffer = await response.arrayBuffer();
