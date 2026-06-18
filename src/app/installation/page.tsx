@@ -254,7 +254,7 @@ export default function InstallationReport() {
               {formData.serialNumbers && (
                 <div className="mt-4">
                   <label className="block text-sm font-medium mb-1">Extracted Serial Numbers</label>
-                  <textarea name="serialNumbers" value={formData.serialNumbers} onChange={handleInputChange} rows={3} className="input-field font-mono text-xs" />
+                  <textarea name="serialNumbers" value={formData.serialNumbers} onChange={(e) => setFormData(prev => ({ ...prev, serialNumbers: e.target.value }))} rows={3} className="input-field font-mono text-xs" />
                 </div>
               )}
             </div>
