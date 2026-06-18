@@ -19,9 +19,9 @@ export async function POST(req: Request) {
     // Basic regex to find the first likely voltage number (e.g., 230, 240.5, 394)
     // We look for a sequence of 2 or 3 digits, optionally followed by a decimal point and one digit
     const match = text.match(/(\d{2,3}(?:\.\d)?)/);
-    const voltage = match ? match[1] : '';
+    const maxVal = match ? match[1] : '';
 
-    return NextResponse.json({ text, voltage, success: true });
+    return NextResponse.json({ voltage: maxVal, text });
   } catch (error: any) {
     console.error('OCR Error:', error);
     return NextResponse.json({ error: 'Failed to process image', details: error.message }, { status: 500 });

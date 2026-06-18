@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin } from "lucide-react";
+import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers } from "lucide-react";
 
 export default function InstallationReport() {
   const [step, setStep] = useState(1);
@@ -11,13 +11,16 @@ export default function InstallationReport() {
   const [isLocating, setIsLocating] = useState(false);
   const [phase, setPhase] = useState("3-Phase");
   const [ocrLoading, setOcrLoading] = useState<string>("");
+  
+  // Bulk OCR State
+  const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
+  const [bulkOcrProgress, setBulkOcrProgress] = useState(0);
 
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
-    panelDesc: "", panelQty: "", inverterSize: "", inverterSn: "",
-    v_ry_before: "", v_rb_before: "", v_yb_before: "", v_rn_before: "", v_bn_before: "", v_yn_before: "", v_re_before: "", v_ye_before: "", v_be_before: "", v_ne_before: "",
+    panelDesc: "", panelQty: "", inverterSize: "", inverterSn: "", serialNumbers: "",
     v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
-    v_ln_before: "", v_le_before: "", v_ln_after: "", v_le_after: "", v_dc_string1: "", v_dc_string2: "",
+    v_ln_after: "", v_le_after: "", v_dc_string1: "", v_dc_string2: "",
     img_sld: "", img_pvlayout: "", img_array: "", img_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
     clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
@@ -58,6 +61,43 @@ export default function InstallationReport() {
     } finally {
       setOcrLoading("");
     }
+  };
+
+  const handleBulkSerialOcr = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    setIsBulkOcrRunning(true);
+    setBulkOcrProgress(0);
+    const extractedSerials: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const uploadData = new FormData();
+      uploadData.append('file', file);
+      try {
+        const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
+        if (res.ok) {
+          const result = await res.json();
+          if (result.text) {
+             // Find sequences of 10+ uppercase letters/numbers (typical serials)
+             const matches = result.text.match(/[A-Z0-9]{10,}/g);
+             if (matches) extractedSerials.push(...matches);
+          }
+        }
+      } catch (err) {
+        console.error("OCR failed for file", file.name);
+      }
+      setBulkOcrProgress(Math.round(((i + 1) / files.length) * 100));
+    }
+    
+    const uniqueSerials = Array.from(new Set(extractedSerials));
+    const serialsString = uniqueSerials.join(', ');
+    
+    // Append to existing serials or overwrite
+    const newSerials = formData.serialNumbers ? formData.serialNumbers + ', ' + serialsString : serialsString;
+    setFormData(prev => ({ ...prev, serialNumbers: newSerials }));
+    setIsBulkOcrRunning(false);
   };
 
   const locateEmergencyServices = async (address: string) => {
@@ -140,6 +180,8 @@ export default function InstallationReport() {
     </div>
   );
 
+  const isNextDisabled = step === 1 && (isParsing || isLocating);
+
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-8">
@@ -187,6 +229,8 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">MHS No</label><input name="siteName" value={formData.siteName} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Customer Name</label><input name="customerName" value={formData.customerName} onChange={handleInputChange} className="input-field" /></div>
               <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Address</label><input name="address" value={formData.address} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">Start Date</label><input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">End Date</label><input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">System Size (kWp)</label><input name="systemSize" value={formData.systemSize} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">PIC Onsite</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field" /></div>
               
@@ -195,6 +239,24 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Inverter Size</label><input name="inverterSize" value={formData.inverterSize} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Inverter S/N</label><input name="inverterSn" value={formData.inverterSn} onChange={handleInputChange} className="input-field" /></div>
+            </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/30 p-6 rounded-xl mt-8">
+              <h3 className="text-lg font-semibold mb-2 flex items-center"><Layers className="mr-2 h-5 w-5 text-blue-500" /> Bulk Solar Panel OCR</h3>
+              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">Upload 12-20 photos of solar panels to automatically extract all serial numbers at once.</p>
+              
+              <label className="btn-primary cursor-pointer w-full sm:w-auto justify-center bg-blue-600 hover:bg-blue-700">
+                {isBulkOcrRunning ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Upload className="mr-2 h-4 w-4" />}
+                {isBulkOcrRunning ? `Extracting... ${bulkOcrProgress}%` : "Upload 12-20 Panel Photos"}
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handleBulkSerialOcr} disabled={isBulkOcrRunning} />
+              </label>
+
+              {formData.serialNumbers && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium mb-1">Extracted Serial Numbers</label>
+                  <textarea name="serialNumbers" value={formData.serialNumbers} onChange={handleInputChange} rows={3} className="input-field font-mono text-xs" />
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -253,23 +315,11 @@ export default function InstallationReport() {
             <div className="bg-[hsl(var(--secondary))/0.5] p-4 rounded-xl mb-6">
               <p className="text-sm text-[hsl(var(--muted-foreground))] flex items-center">
                 <Zap className="h-4 w-4 text-yellow-500 mr-2" />
-                Tap the camera icon next to any input to snap a photo of the multimeter.
+                Tap the camera icon to snap a photo of the multimeter.
               </p>
             </div>
 
-            <h3 className="font-semibold text-lg border-b border-[hsl(var(--border))] pb-2">Before Installation</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {phase === "1-Phase" ? (
-                <>
-                  {renderVoltageInput('v_ln_before', 'Line-Neutral')}
-                  {renderVoltageInput('v_le_before', 'Line-Earth')}
-                </>
-              ) : (
-                ['R-Y', 'R-B', 'Y-B', 'R-N', 'B-N', 'Y-N', 'R-E', 'Y-E', 'B-E', 'N-E'].map(v => renderVoltageInput(`v_${v.toLowerCase().replace('-', '')}_before`, v))
-              )}
-            </div>
-
-            <h3 className="font-semibold text-lg border-b border-[hsl(var(--border))] pb-2 mt-8">After Installation</h3>
+            <h3 className="font-semibold text-lg border-b border-[hsl(var(--border))] pb-2 mt-8">Voltage Readings (Post-Installation)</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {phase === "1-Phase" ? (
                 <>
@@ -340,7 +390,7 @@ export default function InstallationReport() {
 
         <div className="flex justify-between mt-8 pt-4 border-t border-[hsl(var(--border))]">
           <button onClick={() => setStep(step - 1)} disabled={step === 1} className="px-4 py-2 text-sm font-medium disabled:opacity-50 transition-opacity">Back</button>
-          {step < 5 && <button onClick={() => setStep(step + 1)} className="btn-primary">Continue <ChevronRight className="ml-1 h-4 w-4" /></button>}
+          {step < 5 && <button onClick={() => setStep(step + 1)} disabled={isNextDisabled} className="btn-primary">Continue <ChevronRight className="ml-1 h-4 w-4" /></button>}
         </div>
       </motion.div>
     </div>
