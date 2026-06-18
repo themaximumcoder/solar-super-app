@@ -3,6 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
+import { put } from '@vercel/blob';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 // @ts-ignore
 import ImageModule from 'docxtemplater-image-module-free';
 
@@ -45,6 +49,25 @@ export async function POST(req: Request) {
     const buf = doc.getZip().generate({
       type: 'arraybuffer',
       compression: 'DEFLATE',
+    });
+
+    // Save to Vercel Blob
+    const filename = `reports/${data.siteName || 'Report'}_${Date.now()}.docx`;
+    const blob = await put(filename, buf, {
+      access: 'public',
+      contentType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    });
+
+    // Save to Postgres Database
+    await prisma.report.create({
+      data: {
+        mhsNumber: data.siteName || 'Unknown',
+        customerName: data.customerName || 'Unknown',
+        address: data.address || 'Unknown',
+        systemSize: data.systemSize || 'Unknown',
+        picOnsite: data.picName || 'Unknown',
+        documentUrl: blob.url,
+      }
     });
 
     return new NextResponse(buf, {
