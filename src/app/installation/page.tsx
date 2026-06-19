@@ -383,7 +383,7 @@ export default function InstallationReport() {
             </div>
 
             <div className="md:col-span-2 mt-4 bg-[hsl(var(--secondary))] p-4 rounded-lg">
-                <label className="block text-sm font-medium mb-2"><Camera className="inline w-4 h-4 mr-2" /> Bulk Scan PV Serial Numbers (12-20 photos)</label>
+                <label className="block text-sm font-medium mb-2"><Camera className="inline w-4 h-4 mr-2" /> Bulk Scan PV Serial Numbers (1-28 photos)</label>
                 <input type="file" multiple accept="image/*" capture="environment" onChange={handleBulkSerialOcr} className="mb-2 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-primary-foreground hover:file:bg-[hsl(var(--primary)/0.9)]" />
                 
                 {scannedSerials.length > 0 && (
