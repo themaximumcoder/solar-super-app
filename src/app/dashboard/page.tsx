@@ -1,20 +1,52 @@
 import { PrismaClient } from '@prisma/client';
-import { FileText, Download, Calendar } from 'lucide-react';
+import { FileText, Download, Calendar, User } from 'lucide-react';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 const prisma = new PrismaClient();
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ view?: string }> }) {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get('auth_session')?.value;
+  let engineer = null;
+  if (sessionId && sessionId !== 'true') {
+      engineer = await prisma.engineer.findUnique({ where: { id: sessionId } });
+  }
+
+  const { view = 'me' } = await searchParams;
+
+  const whereClause = view === 'me' && engineer ? {
+      OR: [
+          { engineerId: engineer.id },
+          { picOnsite: engineer.firstName }
+      ]
+  } : {};
+
   const reports = await prisma.report.findMany({
+    where: whereClause,
     orderBy: { createdAt: 'desc' }
   });
 
   return (
     <div className="max-w-6xl mx-auto pb-20">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">History & Records</h1>
-        <p className="text-[hsl(var(--muted-foreground))]">View all previously generated Site Acceptance Reports.</p>
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">History & Records</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">View previously generated Site Acceptance Reports.</p>
+        </div>
+        
+        {engineer && (
+            <div className="flex bg-[hsl(var(--secondary))] p-1 rounded-xl">
+                <Link href="/dashboard?view=me" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'me' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
+                    My Reports
+                </Link>
+                <Link href="/dashboard?view=all" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'all' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
+                    All Reports
+                </Link>
+            </div>
+        )}
       </div>
 
       <div className="glass-panel p-6 rounded-2xl">

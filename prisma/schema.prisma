@@ -16,6 +16,8 @@ model Report {
   picOnsite    String
   documentUrl  String
   createdAt    DateTime @default(now())
+  engineerId   String?
+  engineer     Engineer? @relation(fields: [engineerId], references: [id])
 }
 
 model Engineer {
@@ -25,4 +27,5 @@ model Engineer {
   icNumber  String   @unique
   password  String
   createdAt DateTime @default(now())
+  reports   Report[]
 }

@@ -135,6 +135,12 @@ export async function POST(req: Request) {
     const fileName = `Report-${data.siteName || 'Unknown'}-${Date.now()}.docx`;
     const blob = await put(`reports/${fileName}`, buf, { access: 'public' });
 
+    let engineerId = null;
+    if (data.engineer_ic) {
+        const eng = await prisma.engineer.findUnique({ where: { icNumber: data.engineer_ic } });
+        if (eng) engineerId = eng.id;
+    }
+
     // Save history to Prisma
     await prisma.report.create({
         data: {
@@ -143,7 +149,8 @@ export async function POST(req: Request) {
             address: data.address || '',
             systemSize: data.systemSize || '',
             picOnsite: data.picName || '',
-            documentUrl: blob.url
+            documentUrl: blob.url,
+            engineerId: engineerId
         }
     });
 
