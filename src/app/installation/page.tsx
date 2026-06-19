@@ -145,63 +145,75 @@ export default function InstallationReport() {
 
     setBulkOcrProgress(1);
     let completedCount = 0;
+    let currentIndex = 0;
+    const concurrency = 3; // Limit to 3 parallel requests to prevent Vercel/Browser crashing
 
-    const promises = Array.from(files).map(async (file, i) => {
-      try {
-        const compressedBlob = await compressImage(file);
-        const uploadData = new FormData();
-        uploadData.append('file', compressedBlob, file.name);
-        uploadData.append('type', 'serial');
+    const worker = async () => {
+      while (currentIndex < files.length) {
+        const i = currentIndex++;
+        const file = files[i];
         
-        const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
-        if (res.ok) {
-          const result = await res.json();
-          if (result.text) {
-             const cleanedText = result.text.replace(/[\s_]+/g, '');
-             const rawMatches = cleanedText.match(/[a-zA-Z0-9-]{10,}/g);
-             if (rawMatches) {
-                 const matches = rawMatches.map((m: string) => m.toUpperCase());
-                 
-                 setFormData(prev => {
-                     const existing = prev.serialNumbers ? prev.serialNumbers.split(', ').filter(s=>s) : [];
-                     const newMatches = matches.filter((m: string) => !existing.includes(m));
-                     return { ...prev, serialNumbers: [...existing, ...newMatches].join(', ') };
-                 });
+        try {
+          const compressedBlob = await compressImage(file);
+          const uploadData = new FormData();
+          uploadData.append('file', compressedBlob, file.name);
+          uploadData.append('type', 'serial');
+          
+          const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
+          if (res.ok) {
+            const result = await res.json();
+            if (result.text) {
+               const cleanedText = result.text.replace(/[\s_]+/g, '');
+               const rawMatches = cleanedText.match(/[a-zA-Z0-9-]{10,}/g);
+               if (rawMatches) {
+                   const matches = rawMatches.map((m: string) => m.toUpperCase());
+                   
+                   setFormData(prev => {
+                       const existing = prev.serialNumbers ? prev.serialNumbers.split(', ').filter(s=>s) : [];
+                       const newMatches = matches.filter((m: string) => !existing.includes(m));
+                       return { ...prev, serialNumbers: [...existing, ...newMatches].join(', ') };
+                   });
 
-                 setScannedSerials(prev => {
-                     const clone = [...prev];
-                     clone[startIndex + i] = { ...clone[startIndex + i], status: 'success', serial: matches.join(', ') };
-                     return clone;
-                 });
-             } else {
-                 setScannedSerials(prev => {
-                     const clone = [...prev];
-                     clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Not found' };
-                     return clone;
-                 });
-             }
+                   setScannedSerials(prev => {
+                       const clone = [...prev];
+                       clone[startIndex + i] = { ...clone[startIndex + i], status: 'success', serial: matches.join(', ') };
+                       return clone;
+                   });
+               } else {
+                   setScannedSerials(prev => {
+                       const clone = [...prev];
+                       clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Not found' };
+                       return clone;
+                   });
+               }
+            }
+          } else {
+              setScannedSerials(prev => {
+                  const clone = [...prev];
+                  clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: `HTTP ${res.status}` };
+                  return clone;
+              });
           }
-        } else {
-            setScannedSerials(prev => {
-                const clone = [...prev];
-                clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Failed' };
-                return clone;
-            });
+        } catch (err) {
+          console.error("OCR failed for file", file.name, err);
+          setScannedSerials(prev => {
+              const clone = [...prev];
+              clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Error' };
+              return clone;
+          });
+        } finally {
+          completedCount++;
+          setBulkOcrProgress(Math.round((completedCount / files.length) * 100));
         }
-      } catch (err) {
-        console.error("OCR failed for file", file.name, err);
-        setScannedSerials(prev => {
-            const clone = [...prev];
-            clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Failed' };
-            return clone;
-        });
-      } finally {
-        completedCount++;
-        setBulkOcrProgress(Math.round((completedCount / files.length) * 100));
       }
-    });
+    };
 
-    await Promise.all(promises);
+    const workers = [];
+    for (let j = 0; j < Math.min(concurrency, files.length); j++) {
+      workers.push(worker());
+    }
+
+    await Promise.all(workers);
     setIsBulkOcrRunning(false);
   };
 
