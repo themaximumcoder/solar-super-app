@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User } from "lucide-react";
+import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info } from "lucide-react";
+import pvSpecs from "@/data/pvSpecs.json";
 
 export default function InstallationReport() {
   const [step, setStep] = useState(1);
@@ -31,7 +32,7 @@ export default function InstallationReport() {
 
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
-    panelQty: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
+    panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
     v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
     image_1p_ltn: "", image_1p_lte: "", image_1p_nte: "", img_string1: "", img_string2: "",
@@ -324,8 +325,24 @@ export default function InstallationReport() {
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} onChange={handleInputChange} className="input-field" /></div>
-              <div><label className="block text-sm font-medium mb-1">Inverter Size</label><input name="inverterSize" value={formData.inverterSize} onChange={handleInputChange} className="input-field" /></div>
-              <div><label className="block text-sm font-medium mb-1">Inverter S/N</label><input name="inverterSn" value={formData.inverterSn} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">Panel Brand</label><input name="panelBrand" value={formData.panelBrand} onChange={handleInputChange} className="input-field" /></div>
+              
+              {formData.panelQty && (pvSpecs as any)[formData.panelQty] && (
+                <div className="md:col-span-2 mt-2 bg-[hsl(var(--primary)/0.1)] border border-[hsl(var(--primary)/0.3)] rounded-lg p-4">
+                  <h4 className="flex items-center text-sm font-bold text-[hsl(var(--primary))] mb-2"><Info className="w-4 h-4 mr-2"/> Required Equipment Specs (Auto-Detected for {formData.panelQty} PVs)</h4>
+                  <ul className="text-sm space-y-1 text-[hsl(var(--foreground))]">
+                    <li><strong>Inverter Size:</strong> {(pvSpecs as any)[formData.panelQty][0]} kW</li>
+                    <li><strong>DC/AC Ratio:</strong> {(pvSpecs as any)[formData.panelQty][1]}</li>
+                    <li><strong>AC Cable:</strong> {(pvSpecs as any)[formData.panelQty][2]}m</li>
+                    <li><strong>DC Cable:</strong> {(pvSpecs as any)[formData.panelQty][3]}m</li>
+                    <li><strong>Earth Cable:</strong> {(pvSpecs as any)[formData.panelQty][4]}m</li>
+                    <li><strong>Data Cable:</strong> {(pvSpecs as any)[formData.panelQty][5]}m</li>
+                    <li className="whitespace-pre-wrap mt-2 pt-2 border-t border-[hsl(var(--primary)/0.2)]"><strong>Components:</strong><br/>{(pvSpecs as any)[formData.panelQty][6]}</li>
+                  </ul>
+                </div>
+              )}
+
+              <div><label className="block text-sm font-medium mb-1">Inverter Brand</label><input name="inverterBrand" value={formData.inverterBrand} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Dongle S/N</label><input name="dongleSn" value={formData.dongleSn} onChange={handleInputChange} className="input-field" /></div>
             </div>
 

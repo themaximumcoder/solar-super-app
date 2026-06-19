@@ -1,0 +1,112 @@
+{
+  "7": [
+    6,
+    1.24,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 16A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "8": [
+    8,
+    1.085,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 20A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "9": [
+    8,
+    1.24,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 20A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "10": [
+    8,
+    1.3175,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 20A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "11": [
+    10,
+    1.178,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "12": [
+    10,
+    1.24,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "13": [
+    10,
+    1.364,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "14": [
+    12,
+    1.24,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "15": [
+    12,
+    1.2916666666666667,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "16": [
+    12,
+    1.3949999999999998,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ],
+  "17": [
+    12,
+    1.4466666666666665,
+    200,
+    100,
+    80,
+    6,
+    "- AC MCB : 1 nos. 4P 25A\r\n- AC SPD : 3 Phase 40kA, Type 2\r\n- PV Meter: ACREL 3 Phase Meter\r\n- Combiner Box: IP65 type - 1 row, 14 ways\r\n",
+    ""
+  ]
+}
