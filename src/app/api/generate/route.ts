@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import { put } from '@vercel/blob';
 import { PrismaClient } from '@prisma/client';
+import sizeOf from 'image-size';
 
 const prisma = new PrismaClient();
 
@@ -47,8 +48,29 @@ export async function POST(req: Request) {
         getImage: function(tagValue: any) {
             return imageMap.get(tagValue) || emptyPixel;
         },
-        getSize: function() {
-            return [300, 225];
+        getSize: function(img: Buffer, tagValue: string, tagName: string) {
+            if (img === emptyPixel) return [300, 225];
+            try {
+                const dimensions = sizeOf(img);
+                if (!dimensions.width || !dimensions.height) return [300, 225];
+                
+                const maxWidth = 300;
+                const maxHeight = 225;
+                let w = dimensions.width;
+                let h = dimensions.height;
+                
+                if (w > maxWidth) {
+                    h = Math.round((h * maxWidth) / w);
+                    w = maxWidth;
+                }
+                if (h > maxHeight) {
+                    w = Math.round((w * maxHeight) / h);
+                    h = maxHeight;
+                }
+                return [w, h];
+            } catch (e) {
+                return [300, 225];
+            }
         }
     };
 
