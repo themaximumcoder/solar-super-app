@@ -17,3 +17,12 @@ model Report {
   documentUrl  String
   createdAt    DateTime @default(now())
 }
+
+model Engineer {
+  id        String   @id @default(cuid())
+  firstName String
+  phone     String
+  icNumber  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}

@@ -6,7 +6,7 @@ import { Sun, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [icNumber, setIcNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -21,13 +21,13 @@ export default function Login() {
       const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ icNumber, password }),
       });
 
       if (res.ok) {
         window.location.href = "/";
       } else {
-        setError("Invalid username or password");
+        setError("Invalid IC Number or password");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -64,13 +64,13 @@ export default function Login() {
             )}
             
             <div>
-              <label className="block text-sm font-medium mb-1">Username</label>
+              <label className="block text-sm font-medium mb-1">IC Number</label>
               <input 
                 type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={icNumber}
+                onChange={(e) => setIcNumber(e.target.value)}
                 className="input-field"
-                placeholder="Enter username"
+                placeholder="Enter IC Number (e.g. 900101-14-5555)"
                 required
               />
             </div>
@@ -98,6 +98,9 @@ export default function Login() {
                 </>
               )}
             </button>
+            <div className="text-center mt-4">
+              <a href="/signup" className="text-sm text-[hsl(var(--primary))] hover:underline">Don't have an account? Sign Up</a>
+            </div>
           </form>
         </div>
       </motion.div>

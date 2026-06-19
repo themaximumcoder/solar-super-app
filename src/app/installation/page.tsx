@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers } from "lucide-react";
+import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User } from "lucide-react";
 
 export default function InstallationReport() {
   const [step, setStep] = useState(1);
@@ -11,6 +11,16 @@ export default function InstallationReport() {
   const [isLocating, setIsLocating] = useState(false);
   const [phase, setPhase] = useState("3-Phase");
   const [ocrLoading, setOcrLoading] = useState<string>("");
+  const [engineerName, setEngineerName] = useState<string>("");
+  
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.name) setEngineerName(data.name);
+      })
+      .catch(() => {});
+  }, []);
   
   // Bulk OCR State
   const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
@@ -21,6 +31,7 @@ export default function InstallationReport() {
     panelQty: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
     v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     v_ln_after: "", v_le_after: "", v_dc_string1: "", v_dc_string2: "",
+    img_v_ln_after: "", img_v_le_after: "", img_v_dc_string1: "", img_v_dc_string2: "",
     img_sld: "", img_pvlayout: "", img_array: "", img_ac_route: "", img_dc_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
     clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
@@ -44,6 +55,13 @@ export default function InstallationReport() {
     const file = e.target.files?.[0];
     if (!file) return;
     setOcrLoading(field);
+    
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData(prev => ({ ...prev, [`img_${field}`]: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+
     const uploadData = new FormData();
     uploadData.append('file', file);
     try {
@@ -151,7 +169,7 @@ export default function InstallationReport() {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, phase, engineerName }),
       });
       if (!response.ok) throw new Error('Generation failed');
       const blob = await response.blob();
@@ -187,9 +205,16 @@ export default function InstallationReport() {
 
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Installation Report</h1>
-        <p className="text-[hsl(var(--muted-foreground))]">Capture site data, OCR multimeter readings, and inject images.</p>
+      <div className="mb-8 flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Installation Report</h1>
+          <p className="text-[hsl(var(--muted-foreground))]">Capture site data, OCR multimeter readings, and inject images.</p>
+        </div>
+        {engineerName && (
+          <div className="flex items-center text-sm font-medium bg-[hsl(var(--secondary))] px-3 py-1.5 rounded-full">
+            <User className="w-4 h-4 mr-2 text-[hsl(var(--primary))]" /> {engineerName}
+          </div>
+        )}
       </div>
 
       <div className="flex items-center justify-between mb-8 relative">

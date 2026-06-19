@@ -33,9 +33,10 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    const templatePath = path.join(process.cwd(), 'src', 'templates', 'template.docx');
+    const templateFileName = data.phase === '1-Phase' ? 'template2.docx' : 'template.docx';
+    const templatePath = path.join(process.cwd(), 'src', 'templates', templateFileName);
     if (!fs.existsSync(templatePath)) {
-        return NextResponse.json({ error: 'Template file not found on server.' }, { status: 404 });
+        return NextResponse.json({ error: `Template file ${templateFileName} not found on server.` }, { status: 404 });
     }
 
     const content = fs.readFileSync(templatePath, 'binary');
@@ -87,7 +88,8 @@ export async function POST(req: Request) {
         'img_sld', 'img_pvlayout', 'img_array', 'img_ac_route', 'img_dc_route', 
         'img_inverter', 'img_combiner', 'img_interconnection', 
         'img_housekeeping', 'img_toolbox', 'img_safety', 
-        'img_inspection', 'img_skylift'
+        'img_inspection', 'img_skylift',
+        'img_v_ln_after', 'img_v_le_after', 'img_v_dc_string1', 'img_v_dc_string2'
     ];
     for (const key of imageKeys) {
         if (data[key]) {
