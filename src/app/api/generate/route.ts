@@ -89,7 +89,9 @@ export async function POST(req: Request) {
         'img_inverter', 'img_combiner', 'img_interconnection', 
         'img_housekeeping', 'img_toolbox', 'img_safety', 
         'img_inspection', 'img_skylift',
-        'img_v_ln_after', 'img_v_le_after', 'img_v_dc_string1', 'img_v_dc_string2'
+        'image_1p_ltn', 'image_1p_lte', 'image_1p_nte',
+        'img_string1', 'img_string2',
+        'img_v_ry_after', 'img_v_rb_after', 'img_v_yb_after', 'img_v_rn_after', 'img_v_bn_after', 'img_v_yn_after', 'img_v_re_after', 'img_v_ye_after', 'img_v_be_after', 'img_v_ne_after'
     ];
     for (const key of imageKeys) {
         if (data[key]) {

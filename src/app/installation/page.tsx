@@ -30,8 +30,8 @@ export default function InstallationReport() {
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
     panelQty: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
     v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
-    v_ln_after: "", v_le_after: "", v_dc_string1: "", v_dc_string2: "",
-    img_v_ln_after: "", img_v_le_after: "", img_v_dc_string1: "", img_v_dc_string2: "",
+    '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
+    image_1p_ltn: "", image_1p_lte: "", image_1p_nte: "", img_string1: "", img_string2: "",
     img_sld: "", img_pvlayout: "", img_array: "", img_ac_route: "", img_dc_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
     clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
@@ -51,14 +51,14 @@ export default function InstallationReport() {
     reader.readAsDataURL(file);
   };
 
-  const handleOcrScan = async (field: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOcrScan = async (field: string, imgKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setOcrLoading(field);
     
     const reader = new FileReader();
     reader.onloadend = () => {
-      setFormData(prev => ({ ...prev, [`img_${field}`]: reader.result as string }));
+      setFormData(prev => ({ ...prev, [imgKey]: reader.result as string }));
     };
     reader.readAsDataURL(file);
 
@@ -73,9 +73,12 @@ export default function InstallationReport() {
         } else {
           alert('Could not detect a clear number from the multimeter screen.');
         }
+      } else {
+        const err = await res.json();
+        alert('Server Error: ' + err.details);
       }
-    } catch (err) {
-      alert('Error scanning multimeter.');
+    } catch (err: any) {
+      alert('Error scanning multimeter: ' + err.message);
     } finally {
       setOcrLoading("");
     }
@@ -188,19 +191,19 @@ export default function InstallationReport() {
     }
   };
 
-  const renderVoltageInput = (name: string, label: string) => (
+  const renderVoltageInput = (name: string, label: string, imgKey: string) => (
     <div key={name} className="relative flex flex-col">
       <label className="block text-xs font-medium mb-1">{label}</label>
       <div className="flex rounded-md shadow-sm">
         <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
         <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
           {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
-          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan(name, e)} />
+          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e)} />
         </label>
       </div>
-      {formData[`img_${name}`] && (
+      {formData[imgKey] && (
         <div className="mt-2 text-center">
-          <img src={formData[`img_${name}`]} alt="Multimeter capture" className="h-16 w-16 object-cover rounded-md border border-[hsl(var(--border))] mx-auto inline-block" />
+          <img src={formData[imgKey]} alt="Multimeter capture" className="h-16 w-16 object-cover rounded-md border border-[hsl(var(--border))] mx-auto inline-block" />
         </div>
       )}
     </div>
@@ -356,14 +359,15 @@ export default function InstallationReport() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {phase === "1-Phase" ? (
                 <>
-                  {renderVoltageInput('v_ln_after', 'Line-Neutral')}
-                  {renderVoltageInput('v_le_after', 'Line-Earth')}
+                  {renderVoltageInput('1p_ltn', 'Line-Neutral', 'image_1p_ltn')}
+                  {renderVoltageInput('1p_lte', 'Line-Earth', 'image_1p_lte')}
+                  {renderVoltageInput('1p_nte', 'Neutral-Earth', 'image_1p_nte')}
                 </>
               ) : (
-                ['R-Y', 'R-B', 'Y-B', 'R-N', 'B-N', 'Y-N', 'R-E', 'Y-E', 'B-E', 'N-E'].map(v => renderVoltageInput(`v_${v.toLowerCase().replace('-', '')}_after`, v))
+                ['R-Y', 'R-B', 'Y-B', 'R-N', 'B-N', 'Y-N', 'R-E', 'Y-E', 'B-E', 'N-E'].map(v => renderVoltageInput(`v_${v.toLowerCase().replace('-', '')}_after`, v, `img_v_${v.toLowerCase().replace('-', '')}_after`))
               )}
-              {renderVoltageInput('v_dc_string1', 'DC String 1')}
-              {renderVoltageInput('v_dc_string2', 'DC String 2')}
+              {renderVoltageInput('v_dc_string1', 'DC String 1', 'img_string1')}
+              {renderVoltageInput('v_dc_string2', 'DC String 2', 'img_string2')}
             </div>
           </div>
         )}
