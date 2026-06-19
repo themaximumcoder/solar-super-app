@@ -10,6 +10,24 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+const emptyPixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64");
+
+async function resolveImage(tagValue: string) {
+    if (!tagValue || tagValue === '') return emptyPixel;
+    try {
+        if (tagValue.startsWith('data:image/')) {
+            const base64Data = tagValue.split(',')[1];
+            return Buffer.from(base64Data, 'base64');
+        }
+        const response = await fetch(tagValue);
+        if (!response.ok) return emptyPixel;
+        const arrayBuffer = await response.arrayBuffer();
+        return Buffer.from(arrayBuffer);
+    } catch (e) {
+        return emptyPixel;
+    }
+}
+
 export async function POST(req: Request) {
   try {
     const data = await req.json();
@@ -22,24 +40,11 @@ export async function POST(req: Request) {
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
 
-    const emptyPixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64");
-
     const imageOptions = {
         centered: false,
-        getImage: async function(tagValue: string) {
-            if (!tagValue || tagValue === '') return emptyPixel;
-            try {
-                if (tagValue.startsWith('data:image/')) {
-                    const base64Data = tagValue.split(',')[1];
-                    return Buffer.from(base64Data, 'base64');
-                }
-                const response = await fetch(tagValue);
-                if (!response.ok) return emptyPixel;
-                const arrayBuffer = await response.arrayBuffer();
-                return Buffer.from(arrayBuffer);
-            } catch (e) {
-                return emptyPixel;
-            }
+        getImage: function(tagValue: any) {
+            // The tagValue is ALREADY a Buffer because we pre-fetched it below!
+            return tagValue || emptyPixel;
         },
         getSize: function() {
             return [300, 225];
@@ -54,24 +59,40 @@ export async function POST(req: Request) {
         modules: [imageModule]
     });
 
-    // Map image arrays to individual tags
+    // Pre-fetch all images so Docxtemplater can render synchronously
+    const imageKeys = [
+        'img_sld', 'img_pvlayout', 'img_array', 'img_route', 
+        'img_inverter', 'img_combiner', 'img_interconnection', 
+        'img_housekeeping', 'img_toolbox', 'img_safety', 
+        'img_inspection', 'img_skylift'
+    ];
+    for (const key of imageKeys) {
+        if (data[key]) {
+            data[key] = await resolveImage(data[key]);
+        } else {
+            data[key] = emptyPixel;
+        }
+    }
+
     if (data.postInstallPhaseImages && data.postInstallPhaseImages.length > 0) {
-        data.postInstallPhase1 = data.postInstallPhaseImages[0] || '';
-        data.postInstallPhase2 = data.postInstallPhaseImages[1] || '';
-        data.postInstallPhase3 = data.postInstallPhaseImages[2] || '';
+        data.postInstallPhase1 = await resolveImage(data.postInstallPhaseImages[0] || '');
+        data.postInstallPhase2 = await resolveImage(data.postInstallPhaseImages[1] || '');
+        data.postInstallPhase3 = await resolveImage(data.postInstallPhaseImages[2] || '');
     } else {
-        data.postInstallPhase1 = ''; data.postInstallPhase2 = ''; data.postInstallPhase3 = '';
+        data.postInstallPhase1 = emptyPixel; data.postInstallPhase2 = emptyPixel; data.postInstallPhase3 = emptyPixel;
     }
 
     if (data.bulkSerialImages && data.bulkSerialImages.length > 0) {
         for (let i = 0; i < 20; i++) {
-            data[`panel${i+1}`] = data.bulkSerialImages[i] || '';
+            data[`panel${i+1}`] = await resolveImage(data.bulkSerialImages[i] || '');
         }
     } else {
-        for (let i = 0; i < 20; i++) data[`panel${i+1}`] = '';
+        for (let i = 0; i < 20; i++) data[`panel${i+1}`] = emptyPixel;
     }
 
-    await doc.renderAsync(data);
+    // Render SYNCHRONOUSLY
+    (doc as any).setData(data);
+    (doc as any).render();
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
     
