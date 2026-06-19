@@ -64,8 +64,9 @@ export async function POST(req: Request) {
         fullText = responseText;
     }
 
-    } catch (error: any) {
-        console.error('OCR Error:', error);
+    return NextResponse.json({ voltage: maxVal, text: fullText });
+  } catch (error: any) {
+    console.error('OCR Error:', error);
         return NextResponse.json({ error: 'Failed to process image', details: error.message || 'Unknown error' }, { status: 500 });
     }
 }
