@@ -40,11 +40,12 @@ export async function POST(req: Request) {
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
 
+    const imageMap = new Map<string, Buffer>();
+
     const imageOptions = {
         centered: false,
         getImage: function(tagValue: any) {
-            // The tagValue is ALREADY a Buffer because we pre-fetched it below!
-            return tagValue || emptyPixel;
+            return imageMap.get(tagValue) || emptyPixel;
         },
         getSize: function() {
             return [300, 225];
@@ -68,26 +69,34 @@ export async function POST(req: Request) {
     ];
     for (const key of imageKeys) {
         if (data[key]) {
-            data[key] = await resolveImage(data[key]);
+            imageMap.set(key, await resolveImage(data[key]));
+            data[key] = key;
         } else {
-            data[key] = emptyPixel;
+            imageMap.set(key, emptyPixel);
+            data[key] = key;
         }
     }
 
     if (data.postInstallPhaseImages && data.postInstallPhaseImages.length > 0) {
-        data.postInstallPhase1 = await resolveImage(data.postInstallPhaseImages[0] || '');
-        data.postInstallPhase2 = await resolveImage(data.postInstallPhaseImages[1] || '');
-        data.postInstallPhase3 = await resolveImage(data.postInstallPhaseImages[2] || '');
+        imageMap.set('post1', await resolveImage(data.postInstallPhaseImages[0] || '')); data.postInstallPhase1 = 'post1';
+        imageMap.set('post2', await resolveImage(data.postInstallPhaseImages[1] || '')); data.postInstallPhase2 = 'post2';
+        imageMap.set('post3', await resolveImage(data.postInstallPhaseImages[2] || '')); data.postInstallPhase3 = 'post3';
     } else {
-        data.postInstallPhase1 = emptyPixel; data.postInstallPhase2 = emptyPixel; data.postInstallPhase3 = emptyPixel;
+        imageMap.set('post1', emptyPixel); data.postInstallPhase1 = 'post1';
+        imageMap.set('post2', emptyPixel); data.postInstallPhase2 = 'post2';
+        imageMap.set('post3', emptyPixel); data.postInstallPhase3 = 'post3';
     }
 
     if (data.bulkSerialImages && data.bulkSerialImages.length > 0) {
         for (let i = 0; i < 20; i++) {
-            data[`panel${i+1}`] = await resolveImage(data.bulkSerialImages[i] || '');
+            imageMap.set(`panel${i+1}`, await resolveImage(data.bulkSerialImages[i] || ''));
+            data[`panel${i+1}`] = `panel${i+1}`;
         }
     } else {
-        for (let i = 0; i < 20; i++) data[`panel${i+1}`] = emptyPixel;
+        for (let i = 0; i < 20; i++) {
+            imageMap.set(`panel${i+1}`, emptyPixel);
+            data[`panel${i+1}`] = `panel${i+1}`;
+        }
     }
 
     // Render SYNCHRONOUSLY
