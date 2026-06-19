@@ -69,20 +69,28 @@ export default function InstallationReport() {
     
     setIsBulkOcrRunning(true);
     setBulkOcrProgress(0);
-    const extractedSerials: string[] = [];
+    setFormData(prev => ({ ...prev, panelQty: files.length.toString() }));
+
+    const extractedSerials: string[] = formData.serialNumbers ? formData.serialNumbers.split(', ').filter(s => s) : [];
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const uploadData = new FormData();
       uploadData.append('file', file);
+      uploadData.append('type', 'serial');
       try {
         const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
         if (res.ok) {
           const result = await res.json();
           if (result.text) {
-             // Find sequences of 10+ uppercase letters/numbers (typical serials)
-             const matches = result.text.match(/[A-Z0-9]{10,}/g);
-             if (matches) extractedSerials.push(...matches);
+             const cleanedText = result.text.replace(/\s+/g, '');
+             const matches = cleanedText.match(/[A-Z0-9]{10,}/g);
+             if (matches) {
+                 matches.forEach((m: string) => {
+                     if (!extractedSerials.includes(m)) extractedSerials.push(m);
+                 });
+                 setFormData(prev => ({ ...prev, serialNumbers: extractedSerials.join(', ') }));
+             }
           }
         }
       } catch (err) {
@@ -91,12 +99,6 @@ export default function InstallationReport() {
       setBulkOcrProgress(Math.round(((i + 1) / files.length) * 100));
     }
     
-    const uniqueSerials = Array.from(new Set(extractedSerials));
-    const serialsString = uniqueSerials.join(', ');
-    
-    // Append to existing serials or overwrite
-    const newSerials = formData.serialNumbers ? formData.serialNumbers + ', ' + serialsString : serialsString;
-    setFormData(prev => ({ ...prev, serialNumbers: newSerials }));
     setIsBulkOcrRunning(false);
   };
 
