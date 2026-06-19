@@ -181,7 +181,11 @@ export async function POST(req: Request) {
             'Content-Disposition': `attachment; filename="${fileName}"`,
         },
     });
-  } catch (error: any) {
-    return NextResponse.json({ error: 'Failed to generate document', details: error.message }, { status: 500 });
-  }
+    } catch (error: any) {
+        console.error('Generation Error Details:', error);
+        if (error.properties && error.properties.errors) {
+            console.error('Docxtemplater specific errors:', error.properties.errors);
+        }
+        return NextResponse.json({ error: 'Failed to generate document', details: error.message, stack: String(error.stack) }, { status: 500 });
+    }
 }

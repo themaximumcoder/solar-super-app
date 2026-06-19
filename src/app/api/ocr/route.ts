@@ -15,10 +15,7 @@ export async function POST(req: Request) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    let buffer: any = Buffer.from(arrayBuffer);
-
-    // Auto-rotate based on EXIF to fix basic mobile phone rotation issues
-    buffer = await sharp(buffer).rotate().toBuffer();
+    const buffer: any = Buffer.from(arrayBuffer);
 
     let fullText = '';
     let maxVal = '';
@@ -66,6 +63,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ voltage: maxVal, text: fullText });
   } catch (error: any) {
     console.error('OCR Error:', error);
-        return NextResponse.json({ error: 'Failed to process image', details: error.message || 'Unknown error' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to generate document', details: error.message, stack: error.stack }, { status: 500 });
     }
 }

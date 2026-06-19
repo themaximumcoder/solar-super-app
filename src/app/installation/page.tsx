@@ -278,7 +278,10 @@ export default function InstallationReport() {
           ac_db_components: detectedSpecs ? detectedSpecs[6] : "",
         })
       });
-      if (!response.ok) throw new Error('Generation failed');
+      if (!response.ok) {
+          const errData = await response.json().catch(()=>({}));
+          throw new Error(errData.details || errData.error || 'Generation failed');
+      }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
