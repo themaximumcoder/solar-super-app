@@ -189,15 +189,20 @@ export default function InstallationReport() {
   };
 
   const renderVoltageInput = (name: string, label: string) => (
-    <div key={name} className="relative">
+    <div key={name} className="relative flex flex-col">
       <label className="block text-xs font-medium mb-1">{label}</label>
       <div className="flex rounded-md shadow-sm">
-        <input name={name} value={formData[name]} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
+        <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
         <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
           {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
           <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan(name, e)} />
         </label>
       </div>
+      {formData[`img_${name}`] && (
+        <div className="mt-2 text-center">
+          <img src={formData[`img_${name}`]} alt="Multimeter capture" className="h-16 w-16 object-cover rounded-md border border-[hsl(var(--border))] mx-auto inline-block" />
+        </div>
+      )}
     </div>
   );
 
