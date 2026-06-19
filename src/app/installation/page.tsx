@@ -255,6 +255,9 @@ export default function InstallationReport() {
 
   const generateDocument = async () => {
     setIsGenerating(true);
+    
+    const detectedSpecs = formData.panelQty ? (pvSpecs as any)[formData.panelQty] : null;
+    
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -263,10 +266,17 @@ export default function InstallationReport() {
           ...formData, 
           phase, 
           customer_name: formData.customerName,
-          engineer_name: engineer?.name || '',
-          engineer_ic: engineer?.ic || '',
-          engineer_phone: engineer?.phone || ''
-        }),
+          engineer_name: engineer?.name || "",
+          engineer_ic: engineer?.ic || "",
+          engineer_phone: engineer?.phone || "",
+          inverter_size_auto: detectedSpecs ? detectedSpecs[0] : "",
+          dc_ac_ratio: detectedSpecs ? detectedSpecs[1] : "",
+          cable_ac: detectedSpecs ? detectedSpecs[2] : "",
+          cable_dc: detectedSpecs ? detectedSpecs[3] : "",
+          cable_earth: detectedSpecs ? detectedSpecs[4] : "",
+          cable_data: detectedSpecs ? detectedSpecs[5] : "",
+          ac_db_components: detectedSpecs ? detectedSpecs[6] : "",
+        })
       });
       if (!response.ok) throw new Error('Generation failed');
       const blob = await response.blob();
