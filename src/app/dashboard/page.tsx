@@ -83,7 +83,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                   <td className="p-4">{report.systemSize}</td>
                   <td className="p-4">{report.picOnsite}</td>
                   <td className="p-4">
-                    <a href={report.documentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center btn-primary px-3 py-1 text-xs">
+                    <a href={`/api/download?url=${encodeURIComponent(report.documentUrl)}&filename=${encodeURIComponent((report.mhsNumber || 'Report').replace(/[^a-zA-Z0-9_-]/g, ''))}.docx`} className="inline-flex items-center btn-primary px-3 py-1 text-xs">
                       <Download className="h-3 w-3 mr-1" /> Download
                     </a>
                   </td>
