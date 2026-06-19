@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info } from "lucide-react";
+import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info, AlertCircle } from "lucide-react";
 import pvSpecs from "@/data/pvSpecs.json";
 
 export default function InstallationReport() {
@@ -399,17 +399,28 @@ export default function InstallationReport() {
 
             <div className="md:col-span-2 mt-4 bg-[hsl(var(--secondary))] p-4 rounded-lg">
                 <label className="block text-sm font-medium mb-2"><Camera className="inline w-4 h-4 mr-2" /> Bulk Scan PV Serial Numbers (1-28 photos)</label>
-                <input type="file" multiple accept="image/*" capture="environment" onChange={handleBulkSerialOcr} className="mb-2 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-primary-foreground hover:file:bg-[hsl(var(--primary)/0.9)]" />
+                <input type="file" multiple accept="image/*" onChange={handleBulkSerialOcr} className="mb-2 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-primary-foreground hover:file:bg-[hsl(var(--primary)/0.9)]" />
                 
                 {scannedSerials.length > 0 && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4 mt-4">
-                    {scannedSerials.map((scan, idx) => (
-                      <div key={idx} className="relative rounded bg-white dark:bg-black p-1 border overflow-hidden shadow-sm">
-                        <img src={scan.url} alt="Serial" className="w-full h-20 object-cover rounded opacity-80" />
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                          {scan.status === 'loading' && <Loader2 className="w-6 h-6 text-white animate-spin" />}
-                          {scan.status === 'success' && <div className="text-center px-1"><CheckCircle className="w-5 h-5 text-green-400 mx-auto mb-1"/><span className="text-[10px] text-white font-mono break-all">{scan.serial}</span></div>}
-                          {scan.status === 'error' && <div className="text-center"><span className="text-[10px] text-red-400 font-bold">{scan.serial}</span></div>}
+                    {scannedSerials.map((scan, i) => (
+                      <div key={i} className={`relative rounded-xl overflow-hidden border-2 shadow-sm transition-all ${scan.status === 'success' ? 'border-green-500' : scan.status === 'error' ? 'border-red-500' : 'border-blue-500 animate-pulse'}`}>
+                        <div className="aspect-square relative group">
+                          <img src={scan.url} alt={`Scan ${i+1}`} className="w-full h-full object-cover" />
+                          
+                          <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-2">
+                            {scan.status === 'loading' && <Loader2 className="w-8 h-8 text-white animate-spin mb-2" />}
+                            {scan.status === 'success' && <CheckCircle className="w-8 h-8 text-green-400 mb-2 shadow-sm rounded-full bg-black/20" />}
+                            {scan.status === 'error' && <AlertCircle className="w-8 h-8 text-red-400 mb-2 shadow-sm rounded-full bg-black/20" />}
+                            
+                            {scan.serial && scan.status !== 'loading' && (
+                                <div className="mt-1 px-2 py-1 bg-black/70 backdrop-blur-md rounded-md border border-white/20 shadow-xl max-w-full">
+                                    <span className="text-white font-bold text-xs sm:text-sm text-center break-all block">
+                                        {scan.serial}
+                                    </span>
+                                </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
