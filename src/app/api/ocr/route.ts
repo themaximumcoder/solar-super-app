@@ -3,10 +3,9 @@ import Tesseract from 'tesseract.js';
 import sharp from 'sharp';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
 export async function POST(req: Request) {
   try {
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MISSING_KEY');
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const ocrType = formData.get('type') as string; // 'voltage' or 'serial'

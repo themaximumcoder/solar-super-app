@@ -54,21 +54,54 @@ export default function InstallationReport() {
     reader.readAsDataURL(file);
   };
 
+  const compressImage = (file: File): Promise<Blob> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1200;
+          if (width > height && width > maxDim) {
+            height *= maxDim / width;
+            width = maxDim;
+          } else if (height > maxDim) {
+            width *= maxDim / height;
+            height = maxDim;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          canvas.toBlob((blob) => resolve(blob as Blob), 'image/jpeg', 0.8);
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleOcrScan = async (field: string, imgKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setOcrLoading(field);
     
+    // Save original for UI preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData(prev => ({ ...prev, [imgKey]: reader.result as string }));
     };
     reader.readAsDataURL(file);
 
-    const uploadData = new FormData();
-    uploadData.append('file', file);
     try {
+      const compressedBlob = await compressImage(file);
+      const uploadData = new FormData();
+      uploadData.append('file', compressedBlob, file.name);
+
       const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
+      
       if (res.ok) {
         const result = await res.json();
         if (result.voltage) {
@@ -77,8 +110,15 @@ export default function InstallationReport() {
           alert('Could not detect a clear number from the multimeter screen.');
         }
       } else {
-        const err = await res.json();
-        alert('Server Error: ' + err.details);
+        const text = await res.text();
+        try {
+          const err = JSON.parse(text);
+          alert('Server Error: ' + (err.details || err.error));
+        } catch {
+          if (res.status === 413) alert('Error: Image is too large for Vercel. Compression failed.');
+          else if (res.status === 504) alert('Error: Server timed out processing the image.');
+          else alert('Server Error: ' + res.status + ' ' + res.statusText);
+        }
       }
     } catch (err: any) {
       alert('Error scanning multimeter: ' + err.message);
@@ -99,10 +139,12 @@ export default function InstallationReport() {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const uploadData = new FormData();
-      uploadData.append('file', file);
-      uploadData.append('type', 'serial');
       try {
+        const compressedBlob = await compressImage(file);
+        const uploadData = new FormData();
+        uploadData.append('file', compressedBlob, file.name);
+        uploadData.append('type', 'serial');
+        
         const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
         if (res.ok) {
           const result = await res.json();
@@ -118,7 +160,7 @@ export default function InstallationReport() {
           }
         }
       } catch (err) {
-        console.error("OCR failed for file", file.name);
+        console.error("OCR failed for file", file.name, err);
       }
       setBulkOcrProgress(Math.round(((i + 1) / files.length) * 100));
     }
