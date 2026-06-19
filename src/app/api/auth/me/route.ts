@@ -24,7 +24,8 @@ export async function GET() {
     return NextResponse.json({ 
       authenticated: true, 
       name: engineer.firstName,
-      icNumber: engineer.icNumber
+      icNumber: engineer.icNumber,
+      phone: engineer.phone
     });
   } catch (error) {
     return NextResponse.json({ authenticated: false, message: 'Server error' }, { status: 500 });

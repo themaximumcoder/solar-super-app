@@ -11,13 +11,13 @@ export default function InstallationReport() {
   const [isLocating, setIsLocating] = useState(false);
   const [phase, setPhase] = useState("3-Phase");
   const [ocrLoading, setOcrLoading] = useState<string>("");
-  const [engineerName, setEngineerName] = useState<string>("");
+  const [engineer, setEngineer] = useState<{name: string, ic: string, phone: string} | null>(null);
   
   useEffect(() => {
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
-        if (data.name) setEngineerName(data.name);
+        if (data.name) setEngineer({ name: data.name, ic: data.icNumber, phone: data.phone });
       })
       .catch(() => {});
   }, []);
@@ -172,7 +172,14 @@ export default function InstallationReport() {
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, phase, engineerName }),
+        body: JSON.stringify({ 
+          ...formData, 
+          phase, 
+          customer_name: formData.customerName,
+          engineer_name: engineer?.name || '',
+          engineer_ic: engineer?.ic || '',
+          engineer_phone: engineer?.phone || ''
+        }),
       });
       if (!response.ok) throw new Error('Generation failed');
       const blob = await response.blob();
@@ -218,9 +225,9 @@ export default function InstallationReport() {
           <h1 className="text-3xl font-bold mb-2">Installation Report</h1>
           <p className="text-[hsl(var(--muted-foreground))]">Capture site data, OCR multimeter readings, and inject images.</p>
         </div>
-        {engineerName && (
+        {engineer && (
           <div className="flex items-center text-sm font-medium bg-[hsl(var(--secondary))] px-3 py-1.5 rounded-full">
-            <User className="w-4 h-4 mr-2 text-[hsl(var(--primary))]" /> {engineerName}
+            <User className="w-4 h-4 mr-2 text-[hsl(var(--primary))]" /> {engineer.name}
           </div>
         )}
       </div>
