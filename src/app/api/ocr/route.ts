@@ -35,8 +35,8 @@ export async function POST(req: Request) {
             const { data: { text } } = await Tesseract.recognize(rotatedBuffer, 'eng');
             fullText += " " + text;
 
-            const cleanedText = text.replace(/\s+/g, '');
-            if (/[A-Z0-9]{10,}/.test(cleanedText)) {
+            const cleanedText = text.replace(/[\s_]+/g, '');
+            if (/[a-zA-Z0-9-]{10,}/.test(cleanedText)) {
                 // Found a serial! No need to try other rotations.
                 break;
             }

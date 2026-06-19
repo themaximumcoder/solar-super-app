@@ -159,9 +159,10 @@ export default function InstallationReport() {
         if (res.ok) {
           const result = await res.json();
           if (result.text) {
-             const cleanedText = result.text.replace(/\s+/g, '');
-             const matches = cleanedText.match(/[A-Z0-9]{10,}/g);
-             if (matches) {
+             const cleanedText = result.text.replace(/[\s_]+/g, '');
+             const rawMatches = cleanedText.match(/[a-zA-Z0-9-]{10,}/g);
+             if (rawMatches) {
+                 const matches = rawMatches.map((m: string) => m.toUpperCase());
                  const newMatches = matches.filter((m: string) => !extractedSerials.includes(m));
                  extractedSerials.push(...newMatches);
                  
