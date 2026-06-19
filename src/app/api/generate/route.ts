@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 // @ts-ignore
@@ -153,6 +154,12 @@ export async function POST(req: Request) {
             engineerId: engineerId
         }
     });
+
+    try {
+        revalidatePath('/dashboard');
+        revalidatePath('/dashboard?view=me');
+        revalidatePath('/dashboard?view=all');
+    } catch(e) {}
 
     return new NextResponse(new Uint8Array(buf), {
         status: 200,
