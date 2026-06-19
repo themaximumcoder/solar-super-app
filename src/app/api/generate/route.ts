@@ -147,7 +147,7 @@ export async function POST(req: Request) {
     // Save to Vercel Blob
     const safeMhs = (data.siteName || 'Report').replace(/[^a-zA-Z0-9_-]/g, '') || 'Report';
     const fileName = `${safeMhs}.docx`;
-    const blob = await put(`reports/${fileName}`, buf, { access: 'public' });
+    const blob = await put(`reports/${fileName}`, buf, { access: 'public', addRandomSuffix: true });
 
     let engineerId = null;
     if (data.engineer_ic) {
