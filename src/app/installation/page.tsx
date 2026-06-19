@@ -158,7 +158,8 @@ export default function InstallationReport() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Site_Acceptance_Report.docx`;
+      const filename = `${formData.siteName || 'MHS_Unknown'}_${formData.customerName || 'Customer'}_Site Acceptance Report V1.docx`;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
