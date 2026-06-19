@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import Tesseract from 'tesseract.js';
 import sharp from 'sharp';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: Request) {
   try {
@@ -21,31 +24,44 @@ export async function POST(req: Request) {
     let fullText = '';
     let maxVal = '';
 
-    // Try up to 4 rotations (0, 90, 180, 270) to find serial numbers
-    const angles = [0, 90, 180, 270];
-    for (const angle of angles) {
-        let rotatedBuffer: any = buffer;
-        if (angle !== 0) {
-            rotatedBuffer = await sharp(buffer).rotate(angle).toBuffer();
-        }
+    if (ocrType === 'serial') {
+        // Try up to 4 rotations (0, 90, 180, 270) to find serial numbers
+        const angles = [0, 90, 180, 270];
+        for (const angle of angles) {
+            let rotatedBuffer: any = buffer;
+            if (angle !== 0) {
+                rotatedBuffer = await sharp(buffer).rotate(angle).toBuffer();
+            }
 
-        const { data: { text } } = await Tesseract.recognize(rotatedBuffer, 'eng');
-        fullText += " " + text;
+            const { data: { text } } = await Tesseract.recognize(rotatedBuffer, 'eng');
+            fullText += " " + text;
 
-        if (ocrType === 'serial') {
             const cleanedText = text.replace(/\s+/g, '');
             if (/[A-Z0-9]{10,}/.test(cleanedText)) {
                 // Found a serial! No need to try other rotations.
                 break;
             }
-        } else {
-            // For voltage, try to find voltage
-            const match = text.match(/(\d{2,3}(?:\.\d)?)/);
-            if (match) {
-                maxVal = match[1];
-                break;
-            }
         }
+    } else {
+        // MULTIMETER (VOLTAGE) LOGIC via GEMINI
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const imageParts = [
+            {
+                inlineData: {
+                    data: buffer.toString("base64"),
+                    mimeType: file.type || "image/jpeg"
+                }
+            }
+        ];
+        
+        const prompt = "What is the number displayed on the main digital LCD screen of this multimeter? Look very carefully at the seven-segment digital display. Return ONLY the exact number shown, without any units or extra text. (For example, if the screen shows '241', return '241').";
+        
+        const result = await model.generateContent([prompt, ...imageParts]);
+        const responseText = result.response.text();
+        
+        // Clean up response to just numbers and decimals
+        maxVal = responseText.replace(/[^\d.]/g, '').trim();
+        fullText = responseText;
     }
 
     return NextResponse.json({ voltage: maxVal, text: fullText });
