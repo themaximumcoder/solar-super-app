@@ -126,6 +126,18 @@ export async function POST(req: Request) {
         }
     }
 
+    // Map 3-Phase Voltages to specific Word Template variables
+    data['3p_l1tl2'] = data.v_ry_after || '';
+    data['3p_l1tl3'] = data.v_rb_after || '';
+    data['3p_l2tl3'] = data.v_yb_after || '';
+    data['3p_l1tn'] = data.v_rn_after || '';
+    data['3p_l2tn'] = data.v_yn_after || '';
+    data['3p_l3tn'] = data.v_bn_after || '';
+    data['3p_l1te'] = data.v_re_after || '';
+    data['3p_l2te'] = data.v_ye_after || '';
+    data['3p_l3te'] = data.v_be_after || '';
+    data['3p_nte'] = data.v_ne_after || '';
+
     // Render SYNCHRONOUSLY
     (doc as any).setData(data);
     (doc as any).render();
