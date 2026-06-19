@@ -23,17 +23,13 @@ export default function RootLayout({
         <aside className="w-64 border-r border-[hsl(var(--border))] glass-panel hidden md:flex flex-col">
           <div className="h-16 flex items-center px-6 border-b border-[hsl(var(--border))]">
             <Sun className="h-6 w-6 text-[hsl(var(--primary))] mr-3" />
-            <span className="font-bold text-lg tracking-tight">SolarOS</span>
+            <span className="font-bold text-lg tracking-tight">AI Solar OS</span>
           </div>
           
           <nav className="flex-1 px-4 py-6 space-y-2">
             <Link href="/" className="flex items-center px-4 py-3 rounded-lg bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))] font-medium transition-colors">
               <LayoutDashboard className="h-5 w-5 mr-3" />
               Dashboard
-            </Link>
-            <Link href="/proposal" className="flex items-center px-4 py-3 rounded-lg hover:bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] font-medium transition-colors">
-              <PenTool className="h-5 w-5 mr-3" />
-              Design Studio
             </Link>
             <Link href="/installation" className="flex items-center px-4 py-3 rounded-lg hover:bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] font-medium transition-colors">
               <ClipboardCheck className="h-5 w-5 mr-3" />
@@ -54,7 +50,7 @@ export default function RootLayout({
           {/* Mobile Header */}
           <header className="h-16 border-b border-[hsl(var(--border))] glass-panel flex items-center px-4 md:hidden z-10 relative">
             <Sun className="h-6 w-6 text-[hsl(var(--primary))] mr-3" />
-            <span className="font-bold text-lg">SolarOS</span>
+            <span className="font-bold text-lg">AI Solar OS</span>
           </header>
 
           <div className="flex-1 overflow-y-auto p-4 md:p-8 z-10 relative">
