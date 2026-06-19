@@ -31,6 +31,20 @@ export default function InstallationReport() {
   // Bulk OCR State
   const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
 
+  // Auto-populate serialNumbers text area when scans complete
+  useEffect(() => {
+    const validSerials = scannedSerials
+      .filter(s => s.status === 'success' && s.serial && s.serial !== 'NOT_FOUND' && s.serial !== 'Parse Error')
+      .map((s, index) => `${index + 1}. ${s.serial}`);
+    
+    if (validSerials.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        serialNumbers: validSerials.join('\n')
+      }));
+    }
+  }, [scannedSerials]);
+
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
     panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
