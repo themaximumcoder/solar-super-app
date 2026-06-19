@@ -18,10 +18,10 @@ export default function InstallationReport() {
 
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
-    panelDesc: "", panelQty: "", inverterSize: "", inverterSn: "", serialNumbers: "",
+    panelQty: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
     v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     v_ln_after: "", v_le_after: "", v_dc_string1: "", v_dc_string2: "",
-    img_sld: "", img_pvlayout: "", img_array: "", img_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
+    img_sld: "", img_pvlayout: "", img_array: "", img_ac_route: "", img_dc_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
     clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
   });
@@ -235,10 +235,10 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">PIC Onsite</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field" /></div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
-              <div><label className="block text-sm font-medium mb-1">Panel Description</label><input name="panelDesc" value={formData.panelDesc} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Inverter Size</label><input name="inverterSize" value={formData.inverterSize} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Inverter S/N</label><input name="inverterSn" value={formData.inverterSn} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">Dongle S/N</label><input name="dongleSn" value={formData.dongleSn} onChange={handleInputChange} className="input-field" /></div>
             </div>
 
             <div className="bg-blue-500/10 border border-blue-500/30 p-6 rounded-xl mt-8">
@@ -337,17 +337,18 @@ export default function InstallationReport() {
 
         {step === 4 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold mb-4">Required 8 Images</h2>
+            <h2 className="text-xl font-semibold mb-4">Required 9 Images</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 { id: "img_sld", label: "1. Single Line Diagram" },
                 { id: "img_pvlayout", label: "2. PV Layout" },
                 { id: "img_array", label: "3. Solar Panel Array Layout" },
-                { id: "img_route", label: "4. AC and DC Cable Route" },
-                { id: "img_inverter", label: "5. Inverter or Microinverter" },
-                { id: "img_combiner", label: "6. Combiner Box" },
-                { id: "img_interconnection", label: "7. Interconnection Point at DB" },
-                { id: "img_housekeeping", label: "8. Housekeeping" }
+                { id: "img_ac_route", label: "4. AC Cable Route" },
+                { id: "img_dc_route", label: "5. DC Cable Route" },
+                { id: "img_inverter", label: "6. Inverter or Microinverter" },
+                { id: "img_combiner", label: "7. Combiner Box" },
+                { id: "img_interconnection", label: "8. Interconnection Point at DB" },
+                { id: "img_housekeeping", label: "9. Housekeeping" }
               ].map((img) => (
                 <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex items-center ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
                   {formData[img.id] ? (

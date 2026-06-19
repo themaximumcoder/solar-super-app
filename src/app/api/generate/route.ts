@@ -62,7 +62,7 @@ export async function POST(req: Request) {
 
     // Pre-fetch all images so Docxtemplater can render synchronously
     const imageKeys = [
-        'img_sld', 'img_pvlayout', 'img_array', 'img_route', 
+        'img_sld', 'img_pvlayout', 'img_array', 'img_ac_route', 'img_dc_route', 
         'img_inverter', 'img_combiner', 'img_interconnection', 
         'img_housekeeping', 'img_toolbox', 'img_safety', 
         'img_inspection', 'img_skylift'
