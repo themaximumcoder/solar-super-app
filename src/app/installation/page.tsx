@@ -144,11 +144,9 @@ export default function InstallationReport() {
     const startIndex = scannedSerials.length;
 
     setBulkOcrProgress(1);
-    const extractedSerials: string[] = formData.serialNumbers ? formData.serialNumbers.split(', ').filter(s => s) : [];
-    setFormData(prev => ({ ...prev, panelQty: (Number(prev.panelQty || 0) + files.length).toString() }));
+    let completedCount = 0;
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    const promises = Array.from(files).map(async (file, i) => {
       try {
         const compressedBlob = await compressImage(file);
         const uploadData = new FormData();
@@ -163,10 +161,13 @@ export default function InstallationReport() {
              const rawMatches = cleanedText.match(/[a-zA-Z0-9-]{10,}/g);
              if (rawMatches) {
                  const matches = rawMatches.map((m: string) => m.toUpperCase());
-                 const newMatches = matches.filter((m: string) => !extractedSerials.includes(m));
-                 extractedSerials.push(...newMatches);
                  
-                 setFormData(prev => ({ ...prev, serialNumbers: extractedSerials.join(', ') }));
+                 setFormData(prev => {
+                     const existing = prev.serialNumbers ? prev.serialNumbers.split(', ').filter(s=>s) : [];
+                     const newMatches = matches.filter((m: string) => !existing.includes(m));
+                     return { ...prev, serialNumbers: [...existing, ...newMatches].join(', ') };
+                 });
+
                  setScannedSerials(prev => {
                      const clone = [...prev];
                      clone[startIndex + i] = { ...clone[startIndex + i], status: 'success', serial: matches.join(', ') };
@@ -180,6 +181,12 @@ export default function InstallationReport() {
                  });
              }
           }
+        } else {
+            setScannedSerials(prev => {
+                const clone = [...prev];
+                clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Failed' };
+                return clone;
+            });
         }
       } catch (err) {
         console.error("OCR failed for file", file.name, err);
@@ -188,9 +195,13 @@ export default function InstallationReport() {
             clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Failed' };
             return clone;
         });
+      } finally {
+        completedCount++;
+        setBulkOcrProgress(Math.round((completedCount / files.length) * 100));
       }
-      setBulkOcrProgress(Math.round(((i + 1) / files.length) * 100));
-    }
+    });
+
+    await Promise.all(promises);
     setIsBulkOcrRunning(false);
   };
 
