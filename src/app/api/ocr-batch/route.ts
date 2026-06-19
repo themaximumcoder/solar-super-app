@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyBDk6mK-NsJYMtimdtu75B2WBc4xCsi504');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MISSING_KEY');
     const formData = await req.formData();
     const files = formData.getAll('files') as File[];
     
