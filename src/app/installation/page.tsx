@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info } from "lucide-react";
+import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info } from "lucide-react";
 import pvSpecs from "@/data/pvSpecs.json";
 
 export default function InstallationReport() {
@@ -12,6 +12,8 @@ export default function InstallationReport() {
   const [isLocating, setIsLocating] = useState(false);
   const [phase, setPhase] = useState("3-Phase");
   const [ocrLoading, setOcrLoading] = useState<string>("");
+  const [bulkOcrProgress, setBulkOcrProgress] = useState(0);
+  const [scannedSerials, setScannedSerials] = useState<{url: string, serial: string, status: string}[]>([]);
   const [engineer, setEngineer] = useState<{name: string, ic: string, phone: string} | null>(null);
   
   useEffect(() => {
@@ -28,7 +30,6 @@ export default function InstallationReport() {
   
   // Bulk OCR State
   const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
-  const [bulkOcrProgress, setBulkOcrProgress] = useState(0);
 
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
@@ -130,13 +131,21 @@ export default function InstallationReport() {
 
   const handleBulkSerialOcr = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files || files.length === 0) return;
+    if (!files) return;
     
     setIsBulkOcrRunning(true);
-    setBulkOcrProgress(0);
-    setFormData(prev => ({ ...prev, panelQty: files.length.toString() }));
+    const newScans = Array.from(files).map(file => ({
+      url: URL.createObjectURL(file),
+      serial: '',
+      status: 'loading'
+    }));
+    
+    setScannedSerials(prev => [...prev, ...newScans]);
+    const startIndex = scannedSerials.length;
 
+    setBulkOcrProgress(1);
     const extractedSerials: string[] = formData.serialNumbers ? formData.serialNumbers.split(', ').filter(s => s) : [];
+    setFormData(prev => ({ ...prev, panelQty: (Number(prev.panelQty || 0) + files.length).toString() }));
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -153,19 +162,34 @@ export default function InstallationReport() {
              const cleanedText = result.text.replace(/\s+/g, '');
              const matches = cleanedText.match(/[A-Z0-9]{10,}/g);
              if (matches) {
-                 matches.forEach((m: string) => {
-                     if (!extractedSerials.includes(m)) extractedSerials.push(m);
-                 });
+                 const newMatches = matches.filter((m: string) => !extractedSerials.includes(m));
+                 extractedSerials.push(...newMatches);
+                 
                  setFormData(prev => ({ ...prev, serialNumbers: extractedSerials.join(', ') }));
+                 setScannedSerials(prev => {
+                     const clone = [...prev];
+                     clone[startIndex + i] = { ...clone[startIndex + i], status: 'success', serial: matches.join(', ') };
+                     return clone;
+                 });
+             } else {
+                 setScannedSerials(prev => {
+                     const clone = [...prev];
+                     clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Not found' };
+                     return clone;
+                 });
              }
           }
         }
       } catch (err) {
         console.error("OCR failed for file", file.name, err);
+        setScannedSerials(prev => {
+            const clone = [...prev];
+            clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Failed' };
+            return clone;
+        });
       }
       setBulkOcrProgress(Math.round(((i + 1) / files.length) * 100));
     }
-    
     setIsBulkOcrRunning(false);
   };
 
@@ -346,22 +370,32 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">Dongle S/N</label><input name="dongleSn" value={formData.dongleSn} onChange={handleInputChange} className="input-field" /></div>
             </div>
 
-            <div className="bg-blue-500/10 border border-blue-500/30 p-6 rounded-xl mt-8">
-              <h3 className="text-lg font-semibold mb-2 flex items-center"><Layers className="mr-2 h-5 w-5 text-blue-500" /> Bulk Solar Panel OCR</h3>
-              <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">Upload 12-20 photos of solar panels to automatically extract all serial numbers at once.</p>
-              
-              <label className="btn-primary cursor-pointer w-full sm:w-auto justify-center bg-blue-600 hover:bg-blue-700">
-                {isBulkOcrRunning ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Upload className="mr-2 h-4 w-4" />}
-                {isBulkOcrRunning ? `Extracting... ${bulkOcrProgress}%` : "Upload 12-20 Panel Photos"}
-                <input type="file" accept="image/*" multiple className="hidden" onChange={handleBulkSerialOcr} disabled={isBulkOcrRunning} />
-              </label>
+            <div className="md:col-span-2 mt-4 bg-[hsl(var(--secondary))] p-4 rounded-lg">
+                <label className="block text-sm font-medium mb-2"><Camera className="inline w-4 h-4 mr-2" /> Bulk Scan PV Serial Numbers (12-20 photos)</label>
+                <input type="file" multiple accept="image/*" capture="environment" onChange={handleBulkSerialOcr} className="mb-2 block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[hsl(var(--primary))] file:text-primary-foreground hover:file:bg-[hsl(var(--primary)/0.9)]" />
+                
+                {scannedSerials.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4 mt-4">
+                    {scannedSerials.map((scan, idx) => (
+                      <div key={idx} className="relative rounded bg-white dark:bg-black p-1 border overflow-hidden shadow-sm">
+                        <img src={scan.url} alt="Serial" className="w-full h-20 object-cover rounded opacity-80" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                          {scan.status === 'loading' && <Loader2 className="w-6 h-6 text-white animate-spin" />}
+                          {scan.status === 'success' && <div className="text-center px-1"><CheckCircle className="w-5 h-5 text-green-400 mx-auto mb-1"/><span className="text-[10px] text-white font-mono break-all">{scan.serial}</span></div>}
+                          {scan.status === 'error' && <div className="text-center"><span className="text-[10px] text-red-400 font-bold">{scan.serial}</span></div>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {formData.serialNumbers && (
-                <div className="mt-4">
-                  <label className="block text-sm font-medium mb-1">Extracted Serial Numbers</label>
-                  <textarea name="serialNumbers" value={formData.serialNumbers} onChange={(e) => setFormData(prev => ({ ...prev, serialNumbers: e.target.value }))} rows={3} className="input-field font-mono text-xs" />
-                </div>
-              )}
+                {bulkOcrProgress > 0 && bulkOcrProgress < 100 && (
+                  <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+                    <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${bulkOcrProgress}%` }}></div>
+                  </div>
+                )}
+                <label className="block text-sm font-medium mb-1 mt-2">Detected Serial Numbers</label>
+                <textarea name="serialNumbers" value={formData.serialNumbers} onChange={handleInputChange} className="input-field min-h-[100px]" placeholder="Scanned numbers will appear here..." />
             </div>
           </div>
         )}
