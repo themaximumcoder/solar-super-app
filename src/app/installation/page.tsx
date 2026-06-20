@@ -265,9 +265,9 @@ export default function InstallationReport() {
         // Update progress bar
         setBulkOcrProgress(5 + Math.round(((i + chunk.length) / files.length) * 95));
         
-        // Wait 2 seconds between chunks to bypass Free Tier rate limits!
+        // Wait 4.5 seconds between chunks to mathematically guarantee we never exceed 15 Requests Per Minute!
         if (i + CHUNK_SIZE < files.length) {
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 4500));
         }
     }
 
