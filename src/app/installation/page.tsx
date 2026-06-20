@@ -203,74 +203,82 @@ export default function InstallationReport() {
     
     setScannedSerials(prev => [...prev, ...newScans]);
     const startIndex = scannedSerials.length;
-    setBulkOcrProgress(10);
+    setBulkOcrProgress(5);
 
-    try {
-      const uploadData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        const compressedBlob = await compressImage(files[i]);
-        uploadData.append('files', compressedBlob, files[i].name);
-      }
-      
-      setBulkOcrProgress(40); // Uploading...
+    let newFoundSerials: string[] = [];
+    const CHUNK_SIZE = 5;
 
-      const res = await fetch('/api/ocr-batch', { method: 'POST', body: uploadData });
-      
-      if (res.ok) {
-        const data = await res.json();
-        const results = data.results || [];
+    for (let i = 0; i < files.length; i += CHUNK_SIZE) {
+        const chunk = Array.from(files).slice(i, i + CHUNK_SIZE);
+        const uploadData = new FormData();
         
-        let newFoundSerials: string[] = [];
+        for (let j = 0; j < chunk.length; j++) {
+            const compressedBlob = await compressImage(chunk[j]);
+            uploadData.append('files', compressedBlob, chunk[j].name);
+        }
 
-        setScannedSerials(prev => {
-           const clone = [...prev];
-           for (let i = 0; i < files.length; i++) {
-               const idx = startIndex + i;
-               const detected = results[i] || "NOT_FOUND";
-               if (detected === "NOT_FOUND" || detected === "Parse Error") {
-                   clone[idx] = { ...clone[idx], status: 'error', serial: 'Not found' };
-               } else {
-                   const clean = detected.replace(/[\s_]+/g, '').toUpperCase();
-                   clone[idx] = { ...clone[idx], status: 'success', serial: clean };
-                   if (clean) newFoundSerials.push(clean);
-               }
-           }
-           return clone;
-        });
-
-        if (newFoundSerials.length > 0) {
-            setFormData(prev => {
-                const existing = prev.serialNumbers ? prev.serialNumbers.split(', ').filter(s=>s) : [];
-                const uniqueNew = newFoundSerials.filter(m => !existing.includes(m));
-                return { ...prev, serialNumbers: [...existing, ...uniqueNew].join(', ') };
+        try {
+            const res = await fetch('/api/ocr-batch', { method: 'POST', body: uploadData });
+            
+            if (res.ok) {
+                const data = await res.json();
+                const results = data.results || [];
+                
+                setScannedSerials(prev => {
+                   const clone = [...prev];
+                   for (let j = 0; j < chunk.length; j++) {
+                       const idx = startIndex + i + j;
+                       const detected = results[j] || "NOT_FOUND";
+                       if (detected === "NOT_FOUND" || detected === "Parse Error") {
+                           clone[idx] = { ...clone[idx], status: 'error', serial: 'Not found' };
+                       } else {
+                           const clean = detected.replace(/[\s_]+/g, '').toUpperCase();
+                           clone[idx] = { ...clone[idx], status: 'success', serial: clean };
+                           if (clean) newFoundSerials.push(clean);
+                       }
+                   }
+                   return clone;
+                });
+            } else {
+                 const errData = await res.json().catch(()=>({}));
+                 console.error(`Batch Chunk ${i} Error:`, res.status, errData);
+                 setScannedSerials(prev => {
+                     const clone = [...prev];
+                     for (let j = 0; j < chunk.length; j++) {
+                         clone[startIndex + i + j] = { ...clone[startIndex + i + j], status: 'error', serial: `HTTP ${res.status}` };
+                     }
+                     return clone;
+                 });
+            }
+        } catch (err) {
+            console.error(`Batch Chunk ${i} failed`, err);
+            setScannedSerials(prev => {
+                const clone = [...prev];
+                for (let j = 0; j < chunk.length; j++) {
+                    clone[startIndex + i + j] = { ...clone[startIndex + i + j], status: 'error', serial: 'Network Error' };
+                }
+                return clone;
             });
         }
-      } else {
-         const errData = await res.json().catch(()=>({}));
-         const errMsg = errData.details || errData.error || res.statusText;
-         console.error("Batch OCR returned error:", res.status, errData);
-         alert(`Batch Scanner Error: ${errMsg}`);
-         setScannedSerials(prev => {
-             const clone = [...prev];
-             for (let i = 0; i < files.length; i++) {
-                 clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: `Error ${res.status}` };
-             }
-             return clone;
-         });
-      }
-    } catch (err) {
-      console.error("Batch OCR request failed", err);
-      setScannedSerials(prev => {
-          const clone = [...prev];
-          for (let i = 0; i < files.length; i++) {
-              clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: 'Network Error' };
-          }
-          return clone;
-      });
+
+        // Update progress bar
+        setBulkOcrProgress(5 + Math.round(((i + chunk.length) / files.length) * 95));
+        
+        // Wait 2 seconds between chunks to bypass Free Tier rate limits!
+        if (i + CHUNK_SIZE < files.length) {
+            await new Promise(r => setTimeout(r, 2000));
+        }
     }
 
-    setBulkOcrProgress(100);
-    setTimeout(() => setIsBulkOcrRunning(false), 500);
+    if (newFoundSerials.length > 0) {
+        setFormData(prev => {
+            const existing = prev.serialNumbers ? prev.serialNumbers.split(', ').filter(s=>s) : [];
+            const uniqueNew = newFoundSerials.filter(m => !existing.includes(m));
+            return { ...prev, serialNumbers: [...existing, ...uniqueNew].join(', ') };
+        });
+    }
+
+    setIsBulkOcrRunning(false);
   };
 
   const locateEmergencyServices = async (address: string) => {
