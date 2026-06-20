@@ -126,7 +126,6 @@ export async function POST(req: Request) {
         }
     }
 
-    // Map 3-Phase Voltages to specific Word Template variables
     data['3p_l1tl2'] = data.v_ry_after || '';
     data['3p_l1tl3'] = data.v_rb_after || '';
     data['3p_l2tl3'] = data.v_yb_after || '';
@@ -137,6 +136,18 @@ export async function POST(req: Request) {
     data['3p_l2te'] = data.v_ye_after || '';
     data['3p_l3te'] = data.v_be_after || '';
     data['3p_nte'] = data.v_ne_after || '';
+
+    // Map 3-Phase Multimeter Images to specific Word Template variables
+    data['image_3p_l1tl2'] = 'img_v_ry_after';
+    data['image_3p_l1tl3'] = 'img_v_rb_after';
+    data['image_3p_l2tl3'] = 'img_v_yb_after';
+    data['image_3p_l1tn'] = 'img_v_rn_after';
+    data['image_3p_l2tn'] = 'img_v_yn_after';
+    data['image_3p_l3tn'] = 'img_v_bn_after';
+    data['image_3p_l1te'] = 'img_v_re_after';
+    data['image_3p_l2te'] = 'img_v_ye_after';
+    data['image_3p_l3te'] = 'img_v_be_after';
+    data['image_3p_nte'] = 'img_v_ne_after';
 
     // Render SYNCHRONOUSLY
     (doc as any).setData(data);
