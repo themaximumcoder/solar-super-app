@@ -208,7 +208,7 @@ export default function InstallationReport() {
     setBulkOcrProgress(5);
 
     let newFoundSerials: string[] = [];
-    const CHUNK_SIZE = 1;
+    const CHUNK_SIZE = files.length; // Process everything in ONE batch request!
 
     for (let i = 0; i < files.length; i += CHUNK_SIZE) {
         const chunk = Array.from(files).slice(i, i + CHUNK_SIZE);
@@ -269,7 +269,7 @@ export default function InstallationReport() {
         
         // Wait 4.5 seconds between chunks to mathematically guarantee we never exceed 15 Requests Per Minute!
         if (i + CHUNK_SIZE < files.length) {
-            await new Promise(r => setTimeout(r, 4500));
+            // await new Promise(r => setTimeout(r, 4500));
         }
     }
 
