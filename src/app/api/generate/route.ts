@@ -149,6 +149,11 @@ export async function POST(req: Request) {
     data['image_3p_l3te'] = 'img_v_be_after';
     data['image_3p_nte'] = 'img_v_ne_after';
 
+    // Map custom DC String Images and Inverter Size tags
+    data['image_dc_str1'] = 'img_string1';
+    data['image_dc_str2'] = 'img_string2';
+    data['inverter_size'] = data.inverterBrand || '';
+
     // Render SYNCHRONOUSLY
     (doc as any).setData(data);
     (doc as any).render();
