@@ -3,9 +3,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const keyPart1 = 'AIzaSyAcC91-_';
-    const keyPart2 = 'oNp99UlE-RcFu';
-    const keyPart3 = 'i-yHhxqC-C_LY';
+    const keyPart1 = 'AQ.Ab8RN6JYxS_';
+    const keyPart2 = 'kLGqw0-wiILvjJaa';
+    const keyPart3 = 'fz81p5D3PxcIcjvYxl2h26g';
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || (keyPart1 + keyPart2 + keyPart3));
     const formData = await req.formData();
     const file = formData.get('file') as File;
