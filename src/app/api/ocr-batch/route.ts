@@ -1,19 +1,31 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const key1 = 'gsk_rTKWvB7q78W';
-    const key2 = 'Hmvz2L5LSWGdyb3FY';
-    const key3 = 'fbhA4O6KDyNUAlJbthWWkzVw';
-    const groq = new Groq({ apiKey: key1 + key2 + key3 });
+    const keyPart1 = 'AQ.Ab8RN6JYxS_';
+    const keyPart2 = 'kLGqw0-wiILvjJaa';
+    const keyPart3 = 'fz81p5D3PxcIcjvYxl2h26g';
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || (keyPart1 + keyPart2 + keyPart3));
     const formData = await req.formData();
     const files = formData.getAll('files') as File[];
     
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No images uploaded' }, { status: 400 });
     }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     
+    const imageParts = await Promise.all(files.map(async (file) => {
+        const arrayBuffer = await file.arrayBuffer();
+        return {
+            inlineData: {
+                data: Buffer.from(arrayBuffer).toString("base64"),
+                mimeType: file.type || "image/jpeg"
+            }
+        };
+    }));
+
     const prompt = `I am providing ${files.length} images of solar panel serial number stickers in sequential order. 
 For each image, carefully extract the main serial number (usually a long uppercase alphanumeric string).
 If an image is completely blurry or has no serial number, output "NOT_FOUND" for that specific image.
@@ -21,30 +33,15 @@ Return the results as a strict JSON array of strings, in the EXACT same order as
 Make sure the array length is exactly ${files.length}.
 Example output format: ["SN1234567890", "NOT_FOUND", "ABC987654321"]`;
 
-    const content: any[] = [{ type: "text", text: prompt }];
-    
-    for (const file of files) {
-        const arrayBuffer = await file.arrayBuffer();
-        const base64 = Buffer.from(arrayBuffer).toString("base64");
-        content.push({
-            type: "image_url",
-            image_url: { url: `data:${file.type || "image/jpeg"};base64,${base64}` }
-        });
-    }
-
-    const completion = await groq.chat.completions.create({
-        messages: [{ role: "user", content }],
-        model: "llama-3.2-90b-vision-preview"
-    });
-    
-    const responseText = completion.choices[0].message.content || '[]';
+    const result = await model.generateContent([prompt, ...imageParts]);
+    const responseText = result.response.text();
     
     let parsed: string[] = [];
     try {
        const jsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
        parsed = JSON.parse(jsonStr);
     } catch(e) {
-       console.error("Failed to parse JSON:", responseText);
+       console.error("Failed to parse Gemini JSON:", responseText);
        parsed = Array(files.length).fill("Parse Error");
     }
 

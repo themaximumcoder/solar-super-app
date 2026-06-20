@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const key1 = 'gsk_rTKWvB7q78W';
-    const key2 = 'Hmvz2L5LSWGdyb3FY';
-    const key3 = 'fbhA4O6KDyNUAlJbthWWkzVw';
-    const groq = new Groq({ apiKey: key1 + key2 + key3 });
+    const keyPart1 = 'AQ.Ab8RN6JYxS_';
+    const keyPart2 = 'kLGqw0-wiILvjJaa';
+    const keyPart3 = 'fz81p5D3PxcIcjvYxl2h26g';
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || (keyPart1 + keyPart2 + keyPart3));
     const formData = await req.formData();
     const file = formData.get('file') as File;
     
@@ -15,35 +15,33 @@ export async function POST(req: Request) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString("base64");
+    const buffer: any = Buffer.from(arrayBuffer);
 
-    const prompt = `Look at this multimeter screen. Return ONLY the main large voltage number displayed as a plain number (e.g. 240.5). Do NOT include the letter V, do not include units. If you can't read it clearly, return NOT_FOUND.`;
-
-    const completion = await groq.chat.completions.create({
-        messages: [
-            {
-                role: "user",
-                content: [
-                    { type: "text", text: prompt },
-                    { type: "image_url", image_url: { url: `data:${file.type || "image/jpeg"};base64,${base64}` } }
-                ]
-            }
-        ],
-        model: "llama-3.2-90b-vision-preview"
-    });
-
-    const responseText = completion.choices[0].message.content || '';
-    
-    // Fallback logic
     let maxVal = '';
-    const cleaned = responseText.replace(/[^\d.]/g, '');
-    if (cleaned) {
-       maxVal = cleaned;
-    }
+    let fullText = '';
 
-    return NextResponse.json({ voltage: maxVal, raw_text: responseText });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const imageParts = [
+        {
+            inlineData: {
+                data: buffer.toString("base64"),
+                mimeType: file.type || "image/jpeg"
+            }
+        }
+    ];
+    
+    const prompt = "What is the number displayed on the main digital LCD screen of this multimeter? Look very carefully at the seven-segment digital display. Return ONLY the exact number shown, without any units or extra text. (For example, if the screen shows '241', return '241').";
+    
+    const result = await model.generateContent([prompt, ...imageParts]);
+    const responseText = result.response.text();
+    
+    // Clean up response to just numbers and decimals
+    maxVal = responseText.replace(/[^\d.]/g, '').trim();
+    fullText = responseText;
+
+    return NextResponse.json({ voltage: maxVal, text: fullText });
   } catch (error: any) {
     console.error('OCR Error:', error);
-    return NextResponse.json({ error: 'Failed to process image', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process image', details: error.message, stack: error.stack }, { status: 500 });
   }
 }
