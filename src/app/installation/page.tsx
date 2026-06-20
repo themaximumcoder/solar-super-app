@@ -45,6 +45,8 @@ export default function InstallationReport() {
     }
   }, [scannedSerials]);
 
+
+
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
     panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
@@ -55,6 +57,14 @@ export default function InstallationReport() {
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
     clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
   });
+
+  // Auto-populate inverter brand/size based on panel qty
+  useEffect(() => {
+    if (formData.panelQty && (pvSpecs as any)[formData.panelQty]) {
+       const size = (pvSpecs as any)[formData.panelQty][0];
+       setFormData(prev => ({ ...prev, inverterBrand: `${size}kW` }));
+    }
+  }, [formData.panelQty]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -237,11 +247,13 @@ export default function InstallationReport() {
         }
       } else {
          const errData = await res.json().catch(()=>({}));
+         const errMsg = errData.details || errData.error || res.statusText;
          console.error("Batch OCR returned error:", res.status, errData);
+         alert(`Batch Scanner Error: ${errMsg}`);
          setScannedSerials(prev => {
              const clone = [...prev];
              for (let i = 0; i < files.length; i++) {
-                 clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: `HTTP ${res.status}` };
+                 clone[startIndex + i] = { ...clone[startIndex + i], status: 'error', serial: `Error ${res.status}` };
              }
              return clone;
          });
@@ -447,7 +459,7 @@ export default function InstallationReport() {
                 </div>
               )}
 
-              <div><label className="block text-sm font-medium mb-1">Inverter Brand</label><input name="inverterBrand" value={formData.inverterBrand} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">Inverter Size & Brand</label><input name="inverterBrand" value={formData.inverterBrand} onChange={handleInputChange} className="input-field" placeholder="e.g. 8kW Huawei" /></div>
               <div><label className="block text-sm font-medium mb-1">Dongle S/N</label><input name="dongleSn" value={formData.dongleSn} onChange={handleInputChange} className="input-field" /></div>
             </div>
 
