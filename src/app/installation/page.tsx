@@ -208,7 +208,7 @@ export default function InstallationReport() {
     setBulkOcrProgress(5);
 
     let newFoundSerials: string[] = [];
-    const CHUNK_SIZE = files.length; // Process everything in ONE batch request!
+    const CHUNK_SIZE = 1;
 
     for (let i = 0; i < files.length; i += CHUNK_SIZE) {
         const chunk = Array.from(files).slice(i, i + CHUNK_SIZE);
@@ -268,9 +268,8 @@ export default function InstallationReport() {
         setBulkOcrProgress(5 + Math.round(((i + chunk.length) / files.length) * 95));
         
         // Wait 4.5 seconds between chunks to mathematically guarantee we never exceed 15 Requests Per Minute!
-        // REMOVED: Since we are using the new API, we can blast all images instantly in one batch without waiting!
         if (i + CHUNK_SIZE < files.length) {
-            // await new Promise(r => setTimeout(r, 4500));
+            await new Promise(r => setTimeout(r, 4500));
         }
     }
 
