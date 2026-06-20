@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     let maxVal = '';
     let fullText = '';
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const imageParts = [
         {
             inlineData: {

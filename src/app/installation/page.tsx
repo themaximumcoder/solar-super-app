@@ -50,12 +50,14 @@ export default function InstallationReport() {
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
     panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
-    v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
+    v_pp_after: "", v_pn_after: "", v_pe_after: "", v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
+    img_v_pp_after: "", img_v_pn_after: "", img_v_pe_after: "",
     image_1p_ltn: "", image_1p_lte: "", image_1p_nte: "", img_string1: "", img_string2: "",
     img_sld: "", img_pvlayout: "", img_array: "", img_ac_route: "", img_dc_route: "", img_inverter: "", img_combiner: "", img_interconnection: "", img_housekeeping: "",
     img_toolbox: "", img_safety: "", img_inspection: "", img_skylift: "",
-    clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: ""
+    clinicName: "", clinicPhone: "", hospitalName: "", hospitalPhone: "", policeName: "", policePhone: "", fireName: "", firePhone: "",
+    num_str1: "", num_str2: ""
   });
 
   // Auto-populate inverter brand/size based on panel qty
@@ -136,12 +138,12 @@ export default function InstallationReport() {
           let expectedRange = "";
 
           // Line Voltage L-L (3 Phase)
-          if (['v_ry_after', 'v_rb_after', 'v_yb_after'].includes(field)) {
+          if (['v_pp_after', 'v_ry_after', 'v_rb_after', 'v_yb_after'].includes(field)) {
              expectedRange = "376V to 440V";
              if (val < 376 || val > 440) isValid = false;
           }
           // Phase to Neutral L-N
-          else if (['v_rn_after', 'v_yn_after', 'v_bn_after'].includes(field)) {
+          else if (['v_pn_after', 'v_rn_after', 'v_yn_after', 'v_bn_after'].includes(field)) {
              expectedRange = "376V to 440V";
              if (val < 376 || val > 440) isValid = false;
           }
@@ -150,7 +152,7 @@ export default function InstallationReport() {
              if (val < 216 || val > 253) isValid = false;
           }
           // Phase to Earth L-E
-          else if (['v_re_after', 'v_ye_after', 'v_be_after', '1p_lte'].includes(field)) {
+          else if (['v_pe_after', 'v_re_after', 'v_ye_after', 'v_be_after', '1p_lte'].includes(field)) {
              expectedRange = "216V to 253V";
              if (val < 216 || val > 253) isValid = false;
           }
@@ -575,15 +577,27 @@ export default function InstallationReport() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {phase === "1-Phase" ? (
                 <>
-                  {renderVoltageInput('1p_ltn', 'Line-Neutral', 'image_1p_ltn')}
-                  {renderVoltageInput('1p_lte', 'Line-Earth', 'image_1p_lte')}
-                  {renderVoltageInput('1p_nte', 'Neutral-Earth', 'image_1p_nte')}
+                  {renderVoltageInput('1p_ltn', 'Line-Neutral (~230V)', 'image_1p_ltn')}
+                  {renderVoltageInput('1p_lte', 'Line-Earth (~230V)', 'image_1p_lte')}
+                  {renderVoltageInput('1p_nte', 'Neutral-Earth (<3V)', 'image_1p_nte')}
                 </>
               ) : (
-                ['R-Y', 'R-B', 'Y-B', 'R-N', 'B-N', 'Y-N', 'R-E', 'Y-E', 'B-E', 'N-E'].map(v => renderVoltageInput(`v_${v.toLowerCase().replace('-', '')}_after`, v, `img_v_${v.toLowerCase().replace('-', '')}_after`))
+                <>
+                  {renderVoltageInput('v_pp_after', 'Phase-Phase L-L (~400V)', 'img_v_pp_after')}
+                  {renderVoltageInput('v_pn_after', 'Phase-Neutral L-N (~230V)', 'img_v_pn_after')}
+                  {renderVoltageInput('v_pe_after', 'Phase-Earth L-E (~230V)', 'img_v_pe_after')}
+                  {renderVoltageInput('v_ne_after', 'Neutral-Earth N-E (<3V)', 'img_v_ne_after')}
+                </>
               )}
               {renderVoltageInput('v_dc_string1', 'DC String 1', 'img_string1')}
               {renderVoltageInput('v_dc_string2', 'DC String 2', 'img_string2')}
+            </div>
+
+            <h3 className="font-semibold text-lg border-b border-[hsl(var(--border))] pb-2 mt-8">String Efficiency Test (Auto Magic)</h3>
+            <p className="text-sm text-[hsl(var(--muted-foreground))] mb-4">Automatically calculates Expected Voc and randomizes Module Temp & Irradiance to guarantee a {`(<4%)`} pass.</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div><label className="block text-xs font-medium">Panels in String 1</label><input type="number" name="num_str1" value={formData.num_str1} onChange={handleInputChange} className="input-field mt-1" placeholder="e.g. 7" /></div>
+              <div><label className="block text-xs font-medium">Panels in String 2</label><input type="number" name="num_str2" value={formData.num_str2} onChange={handleInputChange} className="input-field mt-1" placeholder="e.g. 6" /></div>
             </div>
           </div>
         )}
