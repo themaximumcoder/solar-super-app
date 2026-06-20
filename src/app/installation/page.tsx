@@ -206,7 +206,7 @@ export default function InstallationReport() {
     setBulkOcrProgress(5);
 
     let newFoundSerials: string[] = [];
-    const CHUNK_SIZE = 5;
+    const CHUNK_SIZE = 1;
 
     for (let i = 0; i < files.length; i += CHUNK_SIZE) {
         const chunk = Array.from(files).slice(i, i + CHUNK_SIZE);
@@ -241,11 +241,12 @@ export default function InstallationReport() {
                 });
             } else {
                  const errData = await res.json().catch(()=>({}));
+                 const detailedError = errData.details || `HTTP ${res.status}`;
                  console.error(`Batch Chunk ${i} Error:`, res.status, errData);
                  setScannedSerials(prev => {
                      const clone = [...prev];
                      for (let j = 0; j < chunk.length; j++) {
-                         clone[startIndex + i + j] = { ...clone[startIndex + i + j], status: 'error', serial: `HTTP ${res.status}` };
+                         clone[startIndex + i + j] = { ...clone[startIndex + i + j], status: 'error', serial: detailedError };
                      }
                      return clone;
                  });
