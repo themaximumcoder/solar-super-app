@@ -121,6 +121,43 @@ export default function InstallationReport() {
       if (res.ok) {
         const result = await res.json();
         if (result.voltage) {
+          const val = parseFloat(result.voltage);
+          let isValid = true;
+          let expectedRange = "";
+
+          // Line Voltage L-L (3 Phase)
+          if (['v_ry_after', 'v_rb_after', 'v_yb_after'].includes(field)) {
+             expectedRange = "376V to 440V";
+             if (val < 376 || val > 440) isValid = false;
+          }
+          // Phase to Neutral L-N
+          else if (['v_rn_after', 'v_yn_after', 'v_bn_after'].includes(field)) {
+             expectedRange = "376V to 440V";
+             if (val < 376 || val > 440) isValid = false;
+          }
+          else if (['1p_ltn'].includes(field)) {
+             expectedRange = "216V to 253V";
+             if (val < 216 || val > 253) isValid = false;
+          }
+          // Phase to Earth L-E
+          else if (['v_re_after', 'v_ye_after', 'v_be_after', '1p_lte'].includes(field)) {
+             expectedRange = "216V to 253V";
+             if (val < 216 || val > 253) isValid = false;
+          }
+          // Neutral to Earth N-E
+          else if (['v_ne_after', '1p_nte'].includes(field)) {
+             expectedRange = "< 3V (Investigate if >3V, Unsafe if >5V)";
+             if (val > 3) isValid = false;
+          }
+
+          if (!isValid) {
+             const userAccepts = confirm(`Warning: The detected voltage is ${val}V, which is outside the acceptable range (${expectedRange}).\n\nThe AI may have misread a decimal, or the reading is unsafe.\n\nClick Cancel to retry the scan, or OK to accept this reading anyway.`);
+             if (!userAccepts) {
+                 setFormData(prev => ({ ...prev, [imgKey]: "" })); // Clear the preview so they can retry
+                 return;
+             }
+          }
+
           setFormData(prev => ({ ...prev, [field]: result.voltage }));
         } else {
           alert('Could not detect a clear number from the multimeter screen.');
