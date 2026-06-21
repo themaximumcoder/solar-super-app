@@ -195,8 +195,10 @@ export async function POST(req: Request) {
                 data[`module_irr${prefix.replace('str', '')}`] = irr.toString();
                 data[`percent${prefix.replace('str', '')}`] = finalDiffPercent.toFixed(2) + '%';
                 
-                // Add Current Magic Math
-                const expectedCurrent = 13.5 * (irr / 1000); // Assume typical STC current is 13.5A
+                // Add Current Magic Math (matching user's Excel formula)
+                // Formula: (1+(Temp-25)*alpha) * IscSTC * (Irr/1000) * NumStrings
+                // Assuming typical values: alpha=0.0004, IscSTC=13.5A, NumStrings=1
+                const expectedCurrent = (1 + (magicTemp - 25) * 0.0004) * 13.5 * (irr / 1000) * 1;
                 const actualCurrent = expectedCurrent * (1 + (Math.random() * 0.04 - 0.02)); // Randomly within 2% diff
                 const currentDiff = ((actualCurrent - expectedCurrent) / expectedCurrent) * 100;
                 
