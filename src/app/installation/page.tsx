@@ -194,17 +194,10 @@ export default function InstallationReport() {
 
   const handleBulkSerialOcr = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (!files) return;
+    if (!files || files.length === 0) return;
 
-    if (!formData.panelQty || parseInt(formData.panelQty) === 0) {
-        alert("Please enter the Panel Quantity before scanning!");
-        return;
-    }
-
-    if (files.length !== parseInt(formData.panelQty)) {
-        alert(`Mismatch Error: You specified ${formData.panelQty} panels, but uploaded ${files.length} images. Please upload exactly ${formData.panelQty} images.`);
-        return;
-    }
+    // Automatically set the panel quantity based on the number of images uploaded!
+    setFormData(prev => ({ ...prev, panelQty: files.length.toString() }));
     
     setIsBulkOcrRunning(true);
     const newScans = Array.from(files).map(file => ({
@@ -462,8 +455,7 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">PIC Onsite</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
-              <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} onChange={handleInputChange} className="input-field" /></div>
-              <div><label className="block text-sm font-medium mb-1">Panel Brand</label><input name="panelBrand" value={formData.panelBrand} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} readOnly className="input-field bg-muted" /></div>
               
               {formData.panelQty && (pvSpecs as any)[formData.panelQty] && (
                 <div className="md:col-span-2 mt-2 bg-[hsl(var(--primary)/0.1)] border border-[hsl(var(--primary)/0.3)] rounded-lg p-4">
