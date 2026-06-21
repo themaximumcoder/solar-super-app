@@ -195,6 +195,16 @@ export default function InstallationReport() {
   const handleBulkSerialOcr = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
+
+    if (!formData.panelQty || parseInt(formData.panelQty) === 0) {
+        alert("Please enter the Panel Quantity before scanning!");
+        return;
+    }
+
+    if (files.length !== parseInt(formData.panelQty)) {
+        alert(`Mismatch Error: You specified ${formData.panelQty} panels, but uploaded ${files.length} images. Please upload exactly ${formData.panelQty} images.`);
+        return;
+    }
     
     setIsBulkOcrRunning(true);
     const newScans = Array.from(files).map(file => ({
