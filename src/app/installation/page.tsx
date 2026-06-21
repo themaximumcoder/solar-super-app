@@ -196,8 +196,8 @@ export default function InstallationReport() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // Automatically set the panel quantity based on the number of images uploaded!
-    setFormData(prev => ({ ...prev, panelQty: files.length.toString() }));
+    // Automatically set the panel quantity to the total number of images (existing + new)
+    setFormData(prev => ({ ...prev, panelQty: (scannedSerials.length + files.length).toString() }));
     
     setIsBulkOcrRunning(true);
     const newScans = Array.from(files).map(file => ({
