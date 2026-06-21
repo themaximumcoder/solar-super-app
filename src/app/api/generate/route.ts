@@ -162,6 +162,10 @@ export async function POST(req: Request) {
     data['image_dc_str1'] = 'img_string1';
     data['image_dc_str2'] = 'img_string2';
     data['inverter_size'] = data.inverterBrand || '';
+    
+    // Map Emergency Contacts
+    data['bombaName'] = data.fireName || '';
+    data['bombaPhone'] = data.firePhone || '';
 
     // --- String Efficiency Magic Math ---
     data['dc_str1'] = data.v_dc_string1 || '';
