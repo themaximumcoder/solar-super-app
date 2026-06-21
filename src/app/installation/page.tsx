@@ -267,9 +267,9 @@ export default function InstallationReport() {
         // Update progress bar
         setBulkOcrProgress(5 + Math.round(((i + chunk.length) / files.length) * 95));
         
-        // Wait 4.5 seconds between chunks to mathematically guarantee we never exceed 15 Requests Per Minute!
+        // Wait 17 seconds between chunks to mathematically guarantee we never exceed Groq's 30,000 TPM limit!
         if (i + CHUNK_SIZE < files.length) {
-            // await new Promise(r => setTimeout(r, 4500));
+            await new Promise(r => setTimeout(r, 17000));
         }
     }
 
