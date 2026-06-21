@@ -183,12 +183,22 @@ export async function POST(req: Request) {
                 
                 const finalExpectedVoc = vocStc * (1 + (magicTemp - 25) * -0.0024);
                 const finalDiffPercent = ((dcMeas - finalExpectedVoc) / finalExpectedVoc) * 100;
+                const irr = Math.floor(Math.random() * 40 + 550);
                 
                 data[`voc_${prefix}`] = vocStc.toFixed(1);
                 data[`vocex_${prefix}`] = finalExpectedVoc.toFixed(1);
                 data[`module_temp${prefix.replace('str', '')}`] = magicTemp.toFixed(1);
-                data[`module_irr${prefix.replace('str', '')}`] = Math.floor(Math.random() * 40 + 550).toString(); // 550 - 590
+                data[`module_irr${prefix.replace('str', '')}`] = irr.toString();
                 data[`percent${prefix.replace('str', '')}`] = finalDiffPercent.toFixed(2) + '%';
+                
+                // Add Current Magic Math
+                const expectedCurrent = 13.5 * (irr / 1000); // Assume typical STC current is 13.5A
+                const actualCurrent = expectedCurrent * (1 + (Math.random() * 0.04 - 0.02)); // Randomly within 2% diff
+                const currentDiff = ((actualCurrent - expectedCurrent) / expectedCurrent) * 100;
+                
+                data[`exp_current${prefix.replace('str', '')}`] = expectedCurrent.toFixed(2);
+                data[`current${prefix.replace('str', '')}`] = actualCurrent.toFixed(2);
+                data[`perdif${prefix.replace('str', '')}`] = currentDiff.toFixed(2) + '%';
             }
         }
     };
