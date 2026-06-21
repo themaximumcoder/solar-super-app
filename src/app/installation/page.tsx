@@ -208,7 +208,7 @@ export default function InstallationReport() {
     setBulkOcrProgress(5);
 
     let newFoundSerials: string[] = [];
-    const CHUNK_SIZE = files.length; // Process everything in ONE batch request!
+    const CHUNK_SIZE = 5; // Groq Llama 4 Scout has a hard limit of 5 images per request
 
     for (let i = 0; i < files.length; i += CHUNK_SIZE) {
         const chunk = Array.from(files).slice(i, i + CHUNK_SIZE);
