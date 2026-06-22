@@ -51,7 +51,16 @@ ${text.substring(0, 3000)}`;
 
                 if (!res.ok) throw new Error("CF HTTP Error");
                 const data = await res.json();
-                let output = data.result?.response || "{}";
+                
+                // Ensure output is always a string to prevent .match is not a function
+                let output = "";
+                if (typeof data.result?.response === "string") {
+                    output = data.result.response;
+                } else if (data.result?.choices?.[0]?.message?.content) {
+                    output = data.result.choices[0].message.content;
+                } else {
+                    output = JSON.stringify(data.result || data);
+                }
                 
                 // Extremely aggressive JSON extraction to handle any Llama fluff
                 const jsonMatch = output.match(/\{[\s\S]*\}/);
