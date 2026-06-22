@@ -67,14 +67,14 @@ ${text.substring(0, 3000)}`;
                     address: parsed.address || '',
                     name: parsed.name || '',
                 }));
-            } catch (err) {
+            } catch (err: any) {
                 // Fallback to basic regex if AI fails
                 const mhsMatch = text.match(/(MHS_\d+)/i);
                 const sizeMatch = text.match(/([\d\.]+\s*kWp)/i);
                 resolve(NextResponse.json({
                     mhs: mhsMatch ? mhsMatch[1] : '',
                     size: sizeMatch ? sizeMatch[1] : '',
-                    address: 'Parse Error',
+                    address: `Error: ${err.message}`,
                     name: 'Parse Error',
                 }));
             }
