@@ -15,6 +15,7 @@ const genAI = new GoogleGenerativeAI(gem1 + gem2 + gem3);
 
 // Advanced Fallback Engine Chain
 const FALLBACK_CHAIN = [
+    { provider: 'cloudflare', id: '@cf/meta/llama-3.2-11b-vision-instruct' },
     { provider: 'groq', id: 'meta-llama/llama-4-scout-17b-16e-instruct' },
     { provider: 'groq', id: 'qwen/qwen3.6-27b' },
     { provider: 'gemini', id: 'gemini-2.5-flash' }
@@ -44,7 +45,41 @@ Example output format: ["SN1234567890", "NOT_FOUND", "ABC987654321"]`;
         try {
             console.log(`[Fallback Engine] Attempting OCR with: ${modelConfig.id}`);
             
-            if (modelConfig.provider === 'groq') {
+            if (modelConfig.provider === 'cloudflare') {
+                const cfAccount = '438e14c26856b48f8104387a2f1589f3';
+                const cfToken1 = 'cfut_f7PcQUrFDaifcJOhFbd';
+                const cfToken2 = 'hanYXyFzHBBuZnIL5v4xcedfa12d2';
+                const cfToken = cfToken1 + cfToken2;
+                
+                const cfPromises = files.map(async (file) => {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const imageArray = Array.from(new Uint8Array(arrayBuffer));
+                    
+                    const payload = {
+                        prompt: `Extract the main solar panel serial number (usually a long uppercase alphanumeric string) from this image. Only output the exact serial number string, nothing else. If it's completely blurry or no serial number is visible, output EXACTLY "NOT_FOUND".`,
+                        image: imageArray
+                    };
+
+                    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccount}/ai/run/${modelConfig.id}`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${cfToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!cfRes.ok) throw new Error(`Cloudflare HTTP ${cfRes.status}`);
+                    const cfData = await cfRes.json();
+                    if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
+                    
+                    let text = cfData.result?.response || "NOT_FOUND";
+                    return text.replace(/```json/g, '').replace(/```/g, '').trim();
+                });
+                
+                parsed = await Promise.all(cfPromises);
+            }
+            else if (modelConfig.provider === 'groq') {
                 const content: any[] = [{ type: "text", text: prompt }];
                 for (const file of files) {
                     const arrayBuffer = await file.arrayBuffer();
