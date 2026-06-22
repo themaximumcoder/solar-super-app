@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     const data = await req.json();
 
     const templateFileName = data.phase === '1-Phase' ? 'template2.docx' : 'template.docx';
-    const templatePath = path.join(process.cwd(), 'src', 'templates', templateFileName);
+    const templatePath = path.join(process.cwd(), 'public', templateFileName);
     if (!fs.existsSync(templatePath)) {
         return NextResponse.json({ error: `Template file ${templateFileName} not found on server.` }, { status: 404 });
     }
