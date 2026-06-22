@@ -255,6 +255,9 @@ export default function InstallationReport() {
                      }
                      return clone;
                  });
+                 // CRITICAL: If the backend fails completely (meaning ALL fallback models failed), ABORT the entire loop!
+                 setIsBulkOcrRunning(false);
+                 break;
             }
         } catch (err) {
             console.error(`Batch Chunk ${i} failed`, err);
@@ -265,6 +268,9 @@ export default function InstallationReport() {
                 }
                 return clone;
             });
+            // CRITICAL: Abort on network crash!
+            setIsBulkOcrRunning(false);
+            break;
         }
 
         // Update progress bar
