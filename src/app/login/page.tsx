@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sun, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,16 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const savedIc = localStorage.getItem("solar_remember_ic");
+    if (savedIc) {
+      setIcNumber(savedIc);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +34,11 @@ export default function Login() {
       });
 
       if (res.ok) {
+        if (rememberMe) {
+          localStorage.setItem("solar_remember_ic", icNumber);
+        } else {
+          localStorage.removeItem("solar_remember_ic");
+        }
         window.location.href = "/";
       } else {
         setError("Invalid IC Number or password");
@@ -85,6 +99,19 @@ export default function Login() {
                 placeholder="••••••••"
                 required
               />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-[hsl(var(--primary))] focus:ring-[hsl(var(--primary))]"
+              />
+              <label htmlFor="remember" className="text-sm text-[hsl(var(--muted-foreground))]">
+                Remember IC Number for faster login
+              </label>
             </div>
 
             <button 

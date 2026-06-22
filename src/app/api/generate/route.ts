@@ -166,6 +166,10 @@ export async function POST(req: Request) {
     // Map Emergency Contacts
     data['bombaName'] = data.fireName || '';
     data['bombaPhone'] = data.firePhone || '';
+    
+    // Map PIC
+    data['pic_name'] = data.picName || '';
+    data['pic_number'] = data.picNumber || '';
 
     // --- String Efficiency Magic Math ---
     data['dc_str1'] = data.v_dc_string1 || '';
@@ -237,6 +241,8 @@ export async function POST(req: Request) {
             address: data.address || '',
             systemSize: data.systemSize || '',
             picOnsite: data.picName || '',
+            pic_name: data.picName || '',
+            pic_number: data.picNumber || '',
             documentUrl: blob.url,
             engineerId: engineerId
         }

@@ -22,7 +22,7 @@ export default function InstallationReport() {
       .then(data => {
         if (data.name) {
           setEngineer({ name: data.name, ic: data.icNumber, phone: data.phone });
-          setFormData(prev => ({ ...prev, picName: data.name }));
+          setFormData(prev => ({ ...prev, picName: data.name, picNumber: data.phone }));
         }
       })
       .catch(() => {});
@@ -48,7 +48,7 @@ export default function InstallationReport() {
 
 
   const [formData, setFormData] = useState<Record<string, string>>({
-    siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "",
+    siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "", picNumber: "",
     panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
     v_pp_after: "", v_pn_after: "", v_pe_after: "", v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
@@ -458,7 +458,8 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">Start Date</label><input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">End Date</label><input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">System Size (kWp)</label><input name="systemSize" value={formData.systemSize} onChange={handleInputChange} className="input-field" /></div>
-              <div><label className="block text-sm font-medium mb-1">PIC Onsite</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
+              <div><label className="block text-sm font-medium mb-1">PIC Onsite Name</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
+              <div><label className="block text-sm font-medium mb-1">PIC Contact Number</label><input name="picNumber" value={formData.picNumber} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} readOnly className="input-field bg-muted" /></div>
