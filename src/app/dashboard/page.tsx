@@ -58,6 +58,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                 <th className="p-4 font-semibold">MHS Number</th>
                 <th className="p-4 font-semibold">Customer</th>
                 <th className="p-4 font-semibold">System Size</th>
+                <th className="p-4 font-semibold">Status</th>
                 <th className="p-4 font-semibold">PIC Onsite</th>
                 <th className="p-4 font-semibold">Action</th>
               </tr>
@@ -83,9 +84,26 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                   <td className="p-4">{report.systemSize}</td>
                   <td className="p-4">{report.picOnsite}</td>
                   <td className="p-4">
-                    <a href={`/api/download?url=${encodeURIComponent(report.documentUrl)}&filename=${encodeURIComponent((report.mhsNumber || 'Report').replace(/[^a-zA-Z0-9_-]/g, ''))}.docx`} className="inline-flex items-center btn-primary px-3 py-1 text-xs">
-                      <Download className="h-3 w-3 mr-1" /> Download
-                    </a>
+                    {report.status === 'DRAFT' ? (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                        Draft
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                        Completed
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-4">
+                    {report.status === 'DRAFT' ? (
+                      <Link href={`/installation?draftId=${report.id}`} className="inline-flex items-center btn-primary px-3 py-1 text-xs bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--primary))/0.2]">
+                        <FileText className="h-3 w-3 mr-1" /> Resume
+                      </Link>
+                    ) : (
+                      <a href={`/api/download?url=${encodeURIComponent(report.documentUrl)}&filename=${encodeURIComponent((report.mhsNumber || 'Report').replace(/[^a-zA-Z0-9_-]/g, ''))}.docx`} className="inline-flex items-center btn-primary px-3 py-1 text-xs">
+                        <Download className="h-3 w-3 mr-1" /> Download
+                      </a>
+                    )}
                   </td>
                 </tr>
               ))}

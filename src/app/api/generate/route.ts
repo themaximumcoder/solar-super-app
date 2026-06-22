@@ -236,17 +236,35 @@ export async function POST(req: Request) {
     }
 
     // Save history to Prisma
-    await prisma.report.create({
-        data: {
-            mhsNumber: data.siteName || 'Unknown',
-            customerName: data.customerName || 'Unknown',
-            address: data.address || '',
-            systemSize: data.systemSize || '',
-            picOnsite: data.picName || '',
-            documentUrl: blob.url,
-            engineerId: engineerId
-        }
-    });
+    if (data.draftId) {
+        await prisma.report.update({
+            where: { id: data.draftId },
+            data: {
+                status: 'COMPLETED',
+                formData: null,
+                mhsNumber: data.siteName || 'Unknown',
+                customerName: data.customerName || 'Unknown',
+                address: data.address || '',
+                systemSize: data.systemSize || '',
+                picOnsite: data.picName || '',
+                documentUrl: blob.url,
+                engineerId: engineerId
+            }
+        });
+    } else {
+        await prisma.report.create({
+            data: {
+                status: 'COMPLETED',
+                mhsNumber: data.siteName || 'Unknown',
+                customerName: data.customerName || 'Unknown',
+                address: data.address || '',
+                systemSize: data.systemSize || '',
+                picOnsite: data.picName || '',
+                documentUrl: blob.url,
+                engineerId: engineerId
+            }
+        });
+    }
 
     try {
         revalidatePath('/dashboard');

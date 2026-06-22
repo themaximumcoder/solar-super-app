@@ -1,11 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info, AlertCircle, LogOut } from "lucide-react";
 import pvSpecs from "@/data/pvSpecs.json";
 
 export default function InstallationReport() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="animate-spin w-8 h-8 text-[hsl(var(--primary))]" /></div>}>
+      <InstallationForm />
+    </Suspense>
+  );
+}
+
+function InstallationForm() {
+  const searchParams = useSearchParams();
+  const draftIdParam = searchParams.get('draftId');
+  
+  const [draftId, setDraftId] = useState<string | null>(draftIdParam);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [step, setStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
@@ -35,9 +49,23 @@ export default function InstallationReport() {
         window.location.href = '/login';
       }
     } catch (error) {
+    } catch (error) {
       console.error('Failed to logout', error);
     }
   };
+
+  useEffect(() => {
+    if (draftIdParam) {
+      fetch(`/api/draft?id=${draftIdParam}`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setFormData(data);
+          }
+        })
+        .catch(console.error);
+    }
+  }, [draftIdParam]);
   
   // Bulk OCR State
   const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
@@ -398,6 +426,7 @@ export default function InstallationReport() {
         body: JSON.stringify({ 
           ...formData, 
           phase, 
+          draftId,
           customer_name: formData.customerName,
           engineer_name: engineer?.name || "",
           engineer_ic: engineer?.ic || "",
@@ -428,6 +457,32 @@ export default function InstallationReport() {
       alert('Failed to generate document: ' + error.message);
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!engineer) {
+      alert("You must be logged in to save progress.");
+      return;
+    }
+    setIsSavingDraft(true);
+    try {
+      const res = await fetch('/api/draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, engineer_ic: engineer.ic, draftId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDraftId(data.draftId);
+        alert('Progress saved successfully! You can resume from your Dashboard later.');
+      } else {
+        alert('Failed to save progress: ' + data.error);
+      }
+    } catch (error: any) {
+      alert('Error saving draft: ' + error.message);
+    } finally {
+      setIsSavingDraft(false);
     }
   };
 
@@ -753,7 +808,18 @@ export default function InstallationReport() {
 
         <div className="flex justify-between mt-8 pt-4 border-t border-[hsl(var(--border))]">
           <button onClick={() => setStep(step - 1)} disabled={step === 1} className="px-4 py-2 text-sm font-medium disabled:opacity-50 transition-opacity">Back</button>
-          {step < 5 && <button onClick={() => setStep(step + 1)} disabled={isNextDisabled} className="btn-primary">Continue <ChevronRight className="ml-1 h-4 w-4" /></button>}
+          
+          <div className="flex gap-2">
+            <button 
+              onClick={handleSaveDraft} 
+              disabled={isSavingDraft} 
+              className="px-4 py-2 text-sm font-medium bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.1] rounded-md transition-colors flex items-center border border-[hsl(var(--border))]"
+            >
+              {isSavingDraft ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Layers className="mr-2 h-4 w-4 text-[hsl(var(--primary))]" />}
+              {isSavingDraft ? "Saving..." : "Save Progress"}
+            </button>
+            {step < 5 && <button onClick={() => setStep(step + 1)} disabled={isNextDisabled} className="btn-primary">Continue <ChevronRight className="ml-1 h-4 w-4" /></button>}
+          </div>
         </div>
       </motion.div>
     </div>
