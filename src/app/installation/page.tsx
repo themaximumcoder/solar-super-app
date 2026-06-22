@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info, AlertCircle } from "lucide-react";
+import { Check, CheckCircle, ChevronRight, Upload, FileText, Loader2, Camera, Zap, MapPin, Layers, User, Info, AlertCircle, LogOut } from "lucide-react";
 import pvSpecs from "@/data/pvSpecs.json";
 
 export default function InstallationReport() {
@@ -27,6 +27,17 @@ export default function InstallationReport() {
       })
       .catch(() => {});
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/logout', { method: 'POST' });
+      if (res.ok) {
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Failed to logout', error);
+    }
+  };
   
   // Bulk OCR State
   const [isBulkOcrRunning, setIsBulkOcrRunning] = useState(false);
@@ -409,8 +420,13 @@ export default function InstallationReport() {
           <p className="text-[hsl(var(--muted-foreground))]">Capture site data, OCR multimeter readings, and inject images.</p>
         </div>
         {engineer && (
-          <div className="flex items-center text-sm font-medium bg-[hsl(var(--secondary))] px-3 py-1.5 rounded-full">
-            <User className="w-4 h-4 mr-2 text-[hsl(var(--primary))]" /> {engineer.name}
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center text-sm font-medium bg-[hsl(var(--secondary))] px-3 py-1.5 rounded-full">
+              <User className="w-4 h-4 mr-2 text-[hsl(var(--primary))]" /> {engineer.name}
+            </div>
+            <button onClick={handleLogout} className="p-2 bg-[hsl(var(--secondary))] rounded-full hover:bg-[hsl(var(--primary))/0.1] text-red-500 transition-colors" title="Logout">
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         )}
       </div>

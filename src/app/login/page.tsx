@@ -82,9 +82,9 @@ export default function Login() {
               <input 
                 type="text"
                 value={icNumber}
-                onChange={(e) => setIcNumber(e.target.value)}
+                onChange={(e) => setIcNumber(e.target.value.replace(/-/g, ''))}
                 className="input-field"
-                placeholder="Enter IC Number (e.g. 900101-14-5555)"
+                placeholder="Enter IC Number (e.g. 900101145555)"
                 required
               />
             </div>

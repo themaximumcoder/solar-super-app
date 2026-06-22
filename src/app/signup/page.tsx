@@ -17,7 +17,11 @@ export default function SignUp() {
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'icNumber') {
+      value = value.replace(/-/g, '');
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -90,7 +94,7 @@ export default function SignUp() {
 
             <div>
               <label className="block text-sm font-medium mb-1">IC Number</label>
-              <input type="text" name="icNumber" value={formData.icNumber} onChange={handleInputChange} className="input-field" placeholder="e.g. 900101-14-5555" required />
+              <input type="text" name="icNumber" value={formData.icNumber} onChange={handleInputChange} className="input-field" placeholder="e.g. 900101145555" required />
             </div>
 
             <div>
