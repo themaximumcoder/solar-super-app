@@ -24,8 +24,8 @@ export async function POST(req: Request) {
         
         const mhsMatch = text.match(/(MHS_\d+)/i);
         const sizeMatch = text.match(/([\d\.]+\s*kWp)/i);
-        const nameMatch = text.match(/Customer[’']?s Full Name\s*([\s\S]*?)\s*Order ID/i);
-        const addressMatch = text.match(/Installation Address:\s*([\s\S]*?)\s*(?:Customer|Date|Contact)/i);
+        const nameMatch = text.match(/Customer[’']?s Full Name\s*([\s\S]*?)\s*Installation Address/i);
+        const addressMatch = text.match(/Installation Address:\s*([\s\S]*?)\s*Electricity Supply Phase/i);
 
         resolve(NextResponse.json({
           mhs: mhsMatch ? mhsMatch[1] : '',
