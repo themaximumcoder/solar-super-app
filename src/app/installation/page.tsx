@@ -59,8 +59,10 @@ export default function InstallationReport() {
 
 
   const [formData, setFormData] = useState<Record<string, string>>({
-    siteName: "", customerName: "", address: "", systemSize: "", startDate: "", endDate: "", picName: "", picNumber: "",
-    panelQty: "", panelBrand: "", inverterBrand: "", inverterSize: "", inverterSn: "", dongleSn: "", serialNumbers: "",
+    siteName: "", customerName: "", address: "", startDate: "", endDate: "", systemSize: "", 
+    inverterBrand: "", panelQty: "", panelSpecs: "",
+    picName: "", picNumber: "", dongle_sn: "",
+    inverterSn: "", serialNumbers: "",
     v_pp_after: "", v_pn_after: "", v_pe_after: "", v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
     img_v_pp_after: "", img_v_pn_after: "", img_v_pe_after: "",
@@ -122,29 +124,66 @@ export default function InstallationReport() {
     });
   };
 
-  const handleOcrScan = async (field: string, imgKey: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleOcrScan = async (field: string, imgKey: string, e: React.ChangeEvent<HTMLInputElement>, mode: string = 'voltage') => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     setOcrLoading(field);
     
-    // Save original for UI preview immediately
+    // Check if multiple files for L-L or L-N
+    if (files.length > 1) {
+      if (imgKey === 'img_v_pp_after') {
+         const keys = ['img_v_ry_after', 'img_v_rb_after', 'img_v_yb_after'];
+         files.forEach((file, index) => {
+           if (index < 3) {
+             const reader = new FileReader();
+             reader.onloadend = () => {
+               setFormData(prev => ({ ...prev, [keys[index]]: reader.result as string }));
+             };
+             reader.readAsDataURL(file);
+           }
+         });
+      } else if (imgKey === 'img_v_pn_after') {
+         const keys = ['img_v_rn_after', 'img_v_yn_after', 'img_v_bn_after'];
+         files.forEach((file, index) => {
+           if (index < 3) {
+             const reader = new FileReader();
+             reader.onloadend = () => {
+               setFormData(prev => ({ ...prev, [keys[index]]: reader.result as string }));
+             };
+             reader.readAsDataURL(file);
+           }
+         });
+      }
+    }
+
+    // Save first file for main preview
+    const firstFile = files[0];
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData(prev => ({ ...prev, [imgKey]: reader.result as string }));
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(firstFile);
 
     try {
-      const compressedBlob = await compressImage(file);
+      const compressedBlob = await compressImage(firstFile);
       const uploadData = new FormData();
-      uploadData.append('file', compressedBlob, file.name);
+      uploadData.append('file', compressedBlob, firstFile.name);
+      uploadData.append('mode', mode);
 
       const res = await fetch('/api/ocr', { method: 'POST', body: uploadData });
       
       if (res.ok) {
         const result = await res.json();
-        if (result.voltage) {
-          const val = parseFloat(result.voltage);
+        const ocrVal = result.value || result.voltage;
+        
+        if (mode === 'dongle') {
+          if (ocrVal) setFormData(prev => ({ ...prev, [field]: ocrVal }));
+          setOcrLoading(null);
+          return;
+        }
+
+        if (ocrVal) {
+          const val = parseFloat(ocrVal);
           let isValid = true;
           let expectedRange = "";
 
@@ -181,9 +220,9 @@ export default function InstallationReport() {
              }
           }
 
-          setFormData(prev => ({ ...prev, [field]: result.voltage }));
+          setFormData(prev => ({ ...prev, [field]: ocrVal }));
         } else {
-          alert('Could not detect a clear number from the multimeter screen.');
+          alert('Could not detect a clear reading from the image.');
         }
       } else {
         const text = await res.text();
@@ -392,23 +431,42 @@ export default function InstallationReport() {
     }
   };
 
-  const renderVoltageInput = (name: string, label: string, imgKey: string) => (
-    <div key={name} className="relative flex flex-col">
-      <label className="block text-xs font-medium mb-1">{label}</label>
-      <div className="flex rounded-md shadow-sm">
-        <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
-        <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
-          {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
-          <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e)} />
-        </label>
-      </div>
-      {formData[imgKey] && (
-        <div className="mt-2 text-center">
-          <img src={formData[imgKey]} alt="Multimeter capture" className="h-16 w-16 object-cover rounded-md border border-[hsl(var(--border))] mx-auto inline-block" />
+  const renderVoltageInput = (name: string, label: string, imgKey: string, multiple: boolean = false, mode: string = 'voltage') => {
+    const isMultipleAllowed = multiple && ['v_pp_after', 'v_pn_after'].includes(name);
+    
+    // For previews, if it's L-L or L-N and they uploaded 3 files, show all 3
+    const getPreviews = () => {
+      if (name === 'v_pp_after' && formData.img_v_ry_after && formData.img_v_rb_after && formData.img_v_yb_after) {
+        return [formData.img_v_ry_after, formData.img_v_rb_after, formData.img_v_yb_after];
+      }
+      if (name === 'v_pn_after' && formData.img_v_rn_after && formData.img_v_yn_after && formData.img_v_bn_after) {
+        return [formData.img_v_rn_after, formData.img_v_yn_after, formData.img_v_bn_after];
+      }
+      return formData[imgKey] ? [formData[imgKey]] : [];
+    };
+    
+    const previews = getPreviews();
+
+    return (
+      <div key={name} className="relative flex flex-col">
+        <label className="block text-xs font-medium mb-1">{label}</label>
+        <div className="flex rounded-md shadow-sm">
+          <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
+          <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
+            {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
+            <input type="file" accept="image/*" capture="environment" multiple={isMultipleAllowed} className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e, mode)} />
+          </label>
         </div>
-      )}
-    </div>
-  );
+        {previews.length > 0 && (
+          <div className={`mt-2 flex justify-center gap-2 ${previews.length > 1 ? 'flex-wrap' : ''}`}>
+            {previews.map((src, i) => (
+              <img key={i} src={src} alt={`Capture ${i+1}`} className="h-16 w-16 object-cover rounded-md border border-[hsl(var(--border))] inline-block" />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const isNextDisabled = step === 1 && (isParsing || isLocating);
 
@@ -476,6 +534,18 @@ export default function InstallationReport() {
               <div><label className="block text-sm font-medium mb-1">System Size (kWp)</label><input name="systemSize" value={formData.systemSize} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">PIC Onsite Name</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
               <div><label className="block text-sm font-medium mb-1">PIC Contact Number</label><input name="picNumber" value={formData.picNumber} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
+              
+              <div className="md:col-span-2 mt-4 pt-4 border-t border-[hsl(var(--border))]">
+                <label className="block text-sm font-semibold mb-2">Smart Dongle Serial Number (OCR)</label>
+                <div className="flex rounded-md shadow-sm">
+                  <input name="dongle_sn" value={formData.dongle_sn || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="e.g. TA2530223782" />
+                  <label className="inline-flex items-center justify-center px-4 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
+                    {ocrLoading === 'dongle_sn' ? <Loader2 className="animate-spin h-5 w-5" /> : <Camera className="h-5 w-5" />}
+                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan('dongle_sn', 'dongle_sn', e, 'dongle')} />
+                  </label>
+                </div>
+                <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Take a photo of the dongle box. The AI will find the S/N.</p>
+              </div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} readOnly className="input-field bg-muted" /></div>
@@ -608,8 +678,8 @@ export default function InstallationReport() {
                 </>
               ) : (
                 <>
-                  {renderVoltageInput('v_pp_after', 'Phase-Phase L-L (~400V)', 'img_v_pp_after')}
-                  {renderVoltageInput('v_pn_after', 'Phase-Neutral L-N (~230V)', 'img_v_pn_after')}
+                  {renderVoltageInput('v_pp_after', 'Phase-Phase L-L (~400V)', 'img_v_pp_after', true)}
+                  {renderVoltageInput('v_pn_after', 'Phase-Neutral L-N (~230V)', 'img_v_pn_after', true)}
                   {renderVoltageInput('v_pe_after', 'Phase-Earth L-E (~230V)', 'img_v_pe_after')}
                   {renderVoltageInput('v_ne_after', 'Neutral-Earth N-E (<3V)', 'img_v_ne_after')}
                 </>

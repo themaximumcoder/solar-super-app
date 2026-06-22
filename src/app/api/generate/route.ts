@@ -163,6 +163,7 @@ export async function POST(req: Request) {
     data['image_dc_str2'] = 'img_string2';
     data['inverter_size'] = data.inverterBrand || '';
     data['inverter_rating'] = (data.inverterBrand || '').replace(/[^0-9.]/g, '');
+    data['dongle_sn'] = data.dongle_sn || '';
     
     // Map Emergency Contacts
     data['bombaName'] = data.fireName || '';
