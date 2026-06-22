@@ -29,7 +29,7 @@ export async function POST(req: Request) {
             const cfToken = cfToken1 + cfToken2;
             
             const prompt = `You are a strict data extractor. Extract the following fields from the messy raw text of a Solar Proposal.
-Return ONLY a raw JSON object with no markdown formatting.
+Return ONLY a raw JSON object. Do NOT add any conversational text, prefixes, or explanations. Start your response directly with { and end with }.
 Fields to extract:
 - "mhs": The Order ID (starts with MHS_)
 - "size": The system size (e.g. 13.64 kWp)
@@ -52,7 +52,12 @@ ${text.substring(0, 3000)}`;
                 if (!res.ok) throw new Error("CF HTTP Error");
                 const data = await res.json();
                 let output = data.result?.response || "{}";
-                output = output.replace(/```json/gi, '').replace(/```/g, '').trim();
+                
+                // Extremely aggressive JSON extraction to handle any Llama fluff
+                const jsonMatch = output.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    output = jsonMatch[0];
+                }
                 
                 const parsed = JSON.parse(output);
                 
