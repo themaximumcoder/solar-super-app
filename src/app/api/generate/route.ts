@@ -241,8 +241,6 @@ export async function POST(req: Request) {
             address: data.address || '',
             systemSize: data.systemSize || '',
             picOnsite: data.picName || '',
-            pic_name: data.picName || '',
-            pic_number: data.picNumber || '',
             documentUrl: blob.url,
             engineerId: engineerId
         }
