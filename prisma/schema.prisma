@@ -31,3 +31,11 @@ model Engineer {
   createdAt DateTime @default(now())
   reports   Report[]
 }
+
+model OfflineSite {
+  id        String   @id @default(cuid())
+  siteId    String   @unique
+  siteName  String
+  offlineAt DateTime @default(now())
+  resolved  Boolean  @default(false)
+}
