@@ -206,7 +206,7 @@ function InstallationForm() {
         
         if (mode === 'dongle') {
           if (ocrVal) setFormData(prev => ({ ...prev, [field]: ocrVal }));
-          setOcrLoading(null);
+          setOcrLoading("");
           return;
         }
 
