@@ -125,8 +125,9 @@ export default function Login() {
                 </>
               )}
             </button>
-            <div className="text-center mt-4">
-              <a href="/signup" className="text-sm text-[hsl(var(--primary))] hover:underline">Don't have an account? Sign Up</a>
+            <div className="text-center mt-4 space-y-2">
+              <a href="/forgot-password" className="block text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">Forgot your password?</a>
+              <a href="/signup" className="block text-sm text-[hsl(var(--primary))] hover:underline">Don't have an account? Sign Up</a>
             </div>
           </form>
         </div>
