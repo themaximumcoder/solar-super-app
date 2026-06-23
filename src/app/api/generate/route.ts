@@ -7,10 +7,8 @@ import ImageModule from 'docxtemplater-image-module-free';
 import fs from 'fs';
 import path from 'path';
 import { put } from '@vercel/blob';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import sizeOf from 'image-size';
-
-const prisma = new PrismaClient();
 
 const emptyPixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=", "base64");
 
