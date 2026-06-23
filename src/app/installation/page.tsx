@@ -50,7 +50,6 @@ function InstallationForm() {
         window.location.href = '/login';
       }
     } catch (error) {
-    } catch (error) {
       console.error('Failed to logout', error);
     }
   };
