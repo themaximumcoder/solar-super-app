@@ -27,6 +27,7 @@ function InstallationForm() {
   const [phase, setPhase] = useState("3-Phase");
   const [ocrLoading, setOcrLoading] = useState<string>("");
   const [bulkOcrProgress, setBulkOcrProgress] = useState(0);
+  const [generatePassword, setGeneratePassword] = useState("");
   const [scannedSerials, setScannedSerials] = useState<{url: string, serial: string, status: string}[]>([]);
   const [engineer, setEngineer] = useState<{name: string, ic: string, phone: string} | null>(null);
   
@@ -415,6 +416,10 @@ function InstallationForm() {
   };
 
   const generateDocument = async () => {
+    if (generatePassword !== "aisolar") {
+      alert("Incorrect authorization password.");
+      return;
+    }
     setIsGenerating(true);
     
     const detectedSpecs = formData.panelQty ? (pvSpecs as any)[formData.panelQty] : null;
@@ -797,8 +802,17 @@ function InstallationForm() {
             <p className="text-[hsl(var(--muted-foreground))] max-w-md mx-auto">
               Images will be injected, voltages populated, and emergency contacts inserted.
             </p>
-            <div className="flex justify-center mt-8">
-              <button onClick={() => generateDocument()} disabled={isGenerating} className="btn-primary px-8">
+            <div className="flex justify-center mt-6">
+              <input 
+                type="password" 
+                placeholder="Enter Auth Password" 
+                value={generatePassword} 
+                onChange={(e) => setGeneratePassword(e.target.value)} 
+                className="input-field max-w-[250px] text-center" 
+              />
+            </div>
+            <div className="flex justify-center mt-4">
+              <button onClick={() => generateDocument()} disabled={isGenerating || !generatePassword} className="btn-primary px-8">
                 <FileText className="mr-2 h-5 w-5" />
                 {isGenerating ? "Injecting & Generating..." : "Generate Site Acceptance Report"}
               </button>
