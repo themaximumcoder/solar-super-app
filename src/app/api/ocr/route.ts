@@ -38,7 +38,7 @@ export async function POST(req: Request) {
           ],
         },
       ],
-      model: 'llama-3.2-90b-vision-preview',
+      model: 'llama-3.2-11b-vision-preview',
     });
 
     const responseText = completion.choices[0].message.content || '';
