@@ -25,7 +25,7 @@ export async function GET(req: Request) {
     // As a robust architecture, we wrap this in a mockable interface until the exact regional endpoint is locked.
 
     // Mock fetching offline sites (In reality, this comes from `fetch('https://openapi.solaxcloud.com/...')`)
-    const offlineSitesFromSolax = [
+    const offlineSitesFromSolax: {siteId: string, siteName: string, status: string}[] = [
       // Example of an offline site that would be returned by SolaX API
       // { siteId: 'SN123456', siteName: 'MHS_KualaLumpur_01', status: 'offline' }
     ];
