@@ -165,6 +165,12 @@ export async function POST(req: Request) {
     data['inverter_rating'] = (data.inverterBrand || '').replace(/[^0-9.]/g, '');
     data['dongle_sn'] = data.dongle_sn || '';
     
+    // Subcontractor Logic
+    data['is_armig'] = data.subcon === 'ARMIG';
+    data['is_hanz'] = data.subcon === 'HANZ';
+    data['is_hr'] = data.subcon === 'HR';
+    data['is_matahari'] = data.subcon === 'MATAHARI';
+    
     // Map Emergency Contacts
     data['bombaName'] = data.fireName || '';
     data['bombaPhone'] = data.firePhone || '';

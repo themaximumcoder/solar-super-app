@@ -90,7 +90,7 @@ function InstallationForm() {
   const [formData, setFormData] = useState<Record<string, string>>({
     siteName: "", customerName: "", address: "", startDate: "", endDate: "", systemSize: "", 
     inverterBrand: "", panelQty: "", panelSpecs: "",
-    picName: "", picNumber: "", dongle_sn: "",
+    picName: "", picNumber: "", dongle_sn: "", subcon: "ARMIG",
     inverterSn: "", serialNumbers: "",
     v_pp_after: "", v_pn_after: "", v_pe_after: "", v_ry_after: "", v_rb_after: "", v_yb_after: "", v_rn_after: "", v_bn_after: "", v_yn_after: "", v_re_after: "", v_ye_after: "", v_be_after: "", v_ne_after: "",
     '1p_ltn': "", '1p_lte': "", '1p_nte': "", v_dc_string1: "", v_dc_string2: "",
@@ -594,6 +594,16 @@ function InstallationForm() {
               <div><label className="block text-sm font-medium mb-1">System Size (kWp)</label><input name="systemSize" value={formData.systemSize} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">PIC Onsite Name</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
               <div><label className="block text-sm font-medium mb-1">PIC Contact Number</label><input name="picNumber" value={formData.picNumber} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">Subcontractor</label>
+                <select name="subcon" value={formData.subcon} onChange={handleInputChange} className="input-field">
+                  <option value="ARMIG">ARMIG</option>
+                  <option value="HANZ">HANZ</option>
+                  <option value="HR">HR</option>
+                  <option value="MATAHARI">MATAHARI</option>
+                </select>
+              </div>
               
               <div className="md:col-span-2 mt-4 pt-4 border-t border-[hsl(var(--border))]">
                 <label className="block text-sm font-semibold mb-2">Smart Dongle Serial Number (OCR)</label>
