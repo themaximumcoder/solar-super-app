@@ -222,8 +222,8 @@ function InstallationForm() {
           }
           // Phase to Neutral L-N
           else if (['v_pn_after', 'v_rn_after', 'v_yn_after', 'v_bn_after'].includes(field)) {
-             expectedRange = "376V to 440V";
-             if (val < 376 || val > 440) isValid = false;
+             expectedRange = "216V to 253V";
+             if (val < 216 || val > 253) isValid = false;
           }
           else if (['1p_ltn'].includes(field)) {
              expectedRange = "216V to 253V";
@@ -748,8 +748,12 @@ function InstallationForm() {
                 </>
               ) : (
                 <>
-                  {renderVoltageInput('v_pp_after', 'Phase-Phase L-L (~400V)', 'img_v_pp_after', true)}
-                  {renderVoltageInput('v_pn_after', 'Phase-Neutral L-N (~230V)', 'img_v_pn_after', true)}
+                  {renderVoltageInput('v_ry_after', 'R-Y Voltage L-L (~400V)', 'img_v_ry_after')}
+                  {renderVoltageInput('v_yb_after', 'Y-B Voltage L-L (~400V)', 'img_v_yb_after')}
+                  {renderVoltageInput('v_rb_after', 'B-R Voltage L-L (~400V)', 'img_v_rb_after')}
+                  {renderVoltageInput('v_rn_after', 'R-N Voltage L-N (~230V)', 'img_v_rn_after')}
+                  {renderVoltageInput('v_yn_after', 'Y-N Voltage L-N (~230V)', 'img_v_yn_after')}
+                  {renderVoltageInput('v_bn_after', 'B-N Voltage L-N (~230V)', 'img_v_bn_after')}
                   {renderVoltageInput('v_pe_after', 'Phase-Earth L-E (~230V)', 'img_v_pe_after')}
                   {renderVoltageInput('v_ne_after', 'Neutral-Earth N-E (<3V)', 'img_v_ne_after')}
                 </>
