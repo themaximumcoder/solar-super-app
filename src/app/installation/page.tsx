@@ -754,7 +754,9 @@ function InstallationForm() {
                   {renderVoltageInput('v_rn_after', 'R-N Voltage L-N (~230V)', 'img_v_rn_after')}
                   {renderVoltageInput('v_yn_after', 'Y-N Voltage L-N (~230V)', 'img_v_yn_after')}
                   {renderVoltageInput('v_bn_after', 'B-N Voltage L-N (~230V)', 'img_v_bn_after')}
-                  {renderVoltageInput('v_pe_after', 'Phase-Earth L-E (~230V)', 'img_v_pe_after')}
+                  {renderVoltageInput('v_re_after', 'R-E Voltage L-E (~230V)', 'img_v_re_after')}
+                  {renderVoltageInput('v_ye_after', 'Y-E Voltage L-E (~230V)', 'img_v_ye_after')}
+                  {renderVoltageInput('v_be_after', 'B-E Voltage L-E (~230V)', 'img_v_be_after')}
                   {renderVoltageInput('v_ne_after', 'Neutral-Earth N-E (<3V)', 'img_v_ne_after')}
                 </>
               )}
