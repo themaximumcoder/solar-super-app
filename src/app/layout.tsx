@@ -27,9 +27,9 @@ export default function RootLayout({
           </div>
           
           <nav className="flex-1 px-4 py-6 space-y-2">
-            <Link href="/" className="flex items-center px-4 py-3 rounded-lg bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))] font-medium transition-colors">
+            <Link href="/dashboard" className="flex items-center px-4 py-3 rounded-lg bg-[hsl(var(--primary))/0.1] text-[hsl(var(--primary))] font-medium transition-colors">
               <LayoutDashboard className="h-5 w-5 mr-3" />
-              Dashboard
+              Dashboard / History
             </Link>
             <Link href="/installation" className="flex items-center px-4 py-3 rounded-lg hover:bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] font-medium transition-colors">
               <ClipboardCheck className="h-5 w-5 mr-3" />
@@ -38,9 +38,9 @@ export default function RootLayout({
           </nav>
 
           <div className="p-4 border-t border-[hsl(var(--border))]">
-            <Link href="/settings" className="flex items-center px-4 py-3 rounded-lg hover:bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] font-medium transition-colors">
-              <Settings className="h-5 w-5 mr-3" />
-              Settings
+            <Link href="/dashboard" className="flex items-center px-4 py-3 rounded-lg hover:bg-[hsl(var(--secondary))] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] font-medium transition-colors">
+              <LayoutDashboard className="h-5 w-5 mr-3" />
+              Saved Drafts
             </Link>
           </div>
         </aside>

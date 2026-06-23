@@ -495,11 +495,13 @@ function InstallationForm() {
     
     // For previews, if it's L-L or L-N and they uploaded 3 files, show all 3
     const getPreviews = () => {
-      if (name === 'v_pp_after' && formData.img_v_ry_after && formData.img_v_rb_after && formData.img_v_yb_after) {
-        return [formData.img_v_ry_after, formData.img_v_rb_after, formData.img_v_yb_after];
+      if (name === 'v_pp_after') {
+        const arr = [formData.img_v_ry_after, formData.img_v_rb_after, formData.img_v_yb_after].filter(Boolean);
+        if (arr.length > 0) return arr;
       }
-      if (name === 'v_pn_after' && formData.img_v_rn_after && formData.img_v_yn_after && formData.img_v_bn_after) {
-        return [formData.img_v_rn_after, formData.img_v_yn_after, formData.img_v_bn_after];
+      if (name === 'v_pn_after') {
+        const arr = [formData.img_v_rn_after, formData.img_v_yn_after, formData.img_v_bn_after].filter(Boolean);
+        if (arr.length > 0) return arr;
       }
       return formData[imgKey] ? [formData[imgKey]] : [];
     };
@@ -635,7 +637,6 @@ function InstallationForm() {
               )}
 
               <div><label className="block text-sm font-medium mb-1">Inverter Size & Brand</label><input name="inverterBrand" value={formData.inverterBrand} onChange={handleInputChange} className="input-field" placeholder="e.g. 8kW Huawei" /></div>
-              <div><label className="block text-sm font-medium mb-1">Dongle S/N</label><input name="dongleSn" value={formData.dongleSn} onChange={handleInputChange} className="input-field" /></div>
             </div>
 
             <div className="md:col-span-2 mt-4 bg-[hsl(var(--secondary))] p-4 rounded-lg">
