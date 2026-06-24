@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { sendOfflineAlert } from '@/lib/email';
+import { sendWhatsAppAlert } from '@/lib/whatsapp';
 
 const prisma = new PrismaClient();
 
@@ -41,8 +42,10 @@ export async function GET(req: Request) {
       if (!existingAlert) {
         // Send email alert
         const emailSent = await sendOfflineAlert(site.siteName, site.siteId);
+        // Send WhatsApp alert
+        const whatsappSent = await sendWhatsAppAlert(site.siteName, site.siteId);
         
-        if (emailSent) {
+        if (emailSent || whatsappSent) {
           // Record it in the database so we don't spam the user again
           await prisma.offlineSite.create({
             data: {
