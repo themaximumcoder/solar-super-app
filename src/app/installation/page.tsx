@@ -414,6 +414,54 @@ function InstallationForm() {
     }
   };
 
+  const uploadAllBase64Images = async (data: any) => {
+    const clone = JSON.parse(JSON.stringify(data));
+    const promises: Promise<void>[] = [];
+
+    const uploadSingle = async (base64Str: string, name: string, callback: (url: string) => void) => {
+        if (typeof base64Str === 'string' && base64Str.startsWith('data:image/')) {
+            try {
+                const res = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64Str, name })
+                });
+                if (res.ok) {
+                    const { url } = await res.json();
+                    callback(url);
+                }
+            } catch(e) {
+                console.error('Failed to upload image chunk', e);
+            }
+        }
+    };
+
+    for (const key of Object.keys(clone)) {
+        if (typeof clone[key] === 'string' && clone[key].startsWith('data:image/')) {
+            promises.push(uploadSingle(clone[key], key, (url) => { clone[key] = url; }));
+        }
+    }
+    
+    if (Array.isArray(clone.bulkSerialImages)) {
+        for (let i = 0; i < clone.bulkSerialImages.length; i++) {
+            if (typeof clone.bulkSerialImages[i] === 'string' && clone.bulkSerialImages[i].startsWith('data:image/')) {
+               promises.push(uploadSingle(clone.bulkSerialImages[i], `bulk_${i}`, (url) => { clone.bulkSerialImages[i] = url; }));
+            }
+        }
+    }
+    if (Array.isArray(clone.postInstallPhaseImages)) {
+        for (let i = 0; i < clone.postInstallPhaseImages.length; i++) {
+            if (typeof clone.postInstallPhaseImages[i] === 'string' && clone.postInstallPhaseImages[i].startsWith('data:image/')) {
+               promises.push(uploadSingle(clone.postInstallPhaseImages[i], `post_${i}`, (url) => { clone.postInstallPhaseImages[i] = url; }));
+            }
+        }
+    }
+    
+    await Promise.all(promises);
+    return clone;
+  };
+
+
   const generateDocument = async () => {
     if (generatePassword !== "aisolar") {
       alert("Incorrect authorization password.");
@@ -424,7 +472,7 @@ function InstallationForm() {
     const detectedSpecs = formData.panelQty ? (pvSpecs as any)[formData.panelQty] : null;
     
     try {
-      const payload = { 
+      let payload = { 
         ...formData, 
         phase, 
         draftId,
@@ -440,7 +488,11 @@ function InstallationForm() {
         cable_data: detectedSpecs ? detectedSpecs[5] : "",
         ac_db_components: detectedSpecs ? detectedSpecs[6] : "",
       };
-      console.log('Payload size:', JSON.stringify(payload).length / 1024 / 1024, 'MB');
+      
+      // Bypass Vercel 4.5MB Payload limit by uploading base64 to Vercel Blob first
+      payload = await uploadAllBase64Images(payload);
+      
+      console.log('Final Payload size:', JSON.stringify(payload).length / 1024 / 1024, 'MB');
       
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -476,10 +528,13 @@ function InstallationForm() {
     }
     setIsSavingDraft(true);
     try {
+      // Bypass Vercel 4.5MB limit by offloading base64 images
+      const safeFormData = await uploadAllBase64Images(formData);
+      
       const res = await fetch('/api/draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, engineer_ic: engineer.ic, draftId })
+        body: JSON.stringify({ ...safeFormData, engineer_ic: engineer.ic, draftId })
       });
       const data = await res.json();
       if (data.success) {
