@@ -132,7 +132,7 @@ function InstallationForm() {
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const maxDim = 1200;
+          const maxDim = 800;
           if (width > height && width > maxDim) {
             height *= maxDim / width;
             width = maxDim;
@@ -144,7 +144,7 @@ function InstallationForm() {
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
-          canvas.toBlob((blob) => resolve(blob as Blob), 'image/jpeg', 0.8);
+          canvas.toBlob((blob) => resolve(blob as Blob), 'image/jpeg', 0.5);
         };
         img.src = e.target?.result as string;
       };
