@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+
+export const maxDuration = 60;
+
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 // @ts-ignore

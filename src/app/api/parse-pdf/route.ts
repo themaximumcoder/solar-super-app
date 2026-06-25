@@ -95,3 +95,4 @@ ${text.substring(0, 3000)}`;
     return NextResponse.json({ error: 'Failed to parse PDF', details: error.message }, { status: 500 });
   }
 }
+export const maxDuration = 60;  

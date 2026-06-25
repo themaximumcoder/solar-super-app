@@ -137,3 +137,4 @@ Example output format: ["SN1234567890", "NOT_FOUND", "ABC987654321"]`;
     return NextResponse.json({ error: 'Failed', details: error.message }, { status: 500 });
   }
 }
+export const maxDuration = 60;  
