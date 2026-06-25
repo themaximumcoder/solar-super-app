@@ -424,29 +424,34 @@ function InstallationForm() {
     const detectedSpecs = formData.panelQty ? (pvSpecs as any)[formData.panelQty] : null;
     
     try {
+      const payload = { 
+        ...formData, 
+        phase, 
+        draftId,
+        customer_name: formData.customerName,
+        engineer_name: engineer?.name || "",
+        engineer_ic: engineer?.ic || "",
+        engineer_phone: engineer?.phone || "",
+        inverter_size_auto: detectedSpecs ? detectedSpecs[0] : "",
+        dc_ac_ratio: detectedSpecs ? detectedSpecs[1] : "",
+        cable_ac: detectedSpecs ? detectedSpecs[2] : "",
+        cable_dc: detectedSpecs ? detectedSpecs[3] : "",
+        cable_earth: detectedSpecs ? detectedSpecs[4] : "",
+        cable_data: detectedSpecs ? detectedSpecs[5] : "",
+        ac_db_components: detectedSpecs ? detectedSpecs[6] : "",
+      };
+      console.log('Payload size:', JSON.stringify(payload).length / 1024 / 1024, 'MB');
+      
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          ...formData, 
-          phase, 
-          draftId,
-          customer_name: formData.customerName,
-          engineer_name: engineer?.name || "",
-          engineer_ic: engineer?.ic || "",
-          engineer_phone: engineer?.phone || "",
-          inverter_size_auto: detectedSpecs ? detectedSpecs[0] : "",
-          dc_ac_ratio: detectedSpecs ? detectedSpecs[1] : "",
-          cable_ac: detectedSpecs ? detectedSpecs[2] : "",
-          cable_dc: detectedSpecs ? detectedSpecs[3] : "",
-          cable_earth: detectedSpecs ? detectedSpecs[4] : "",
-          cable_data: detectedSpecs ? detectedSpecs[5] : "",
-          ac_db_components: detectedSpecs ? detectedSpecs[6] : "",
-        })
+        body: JSON.stringify(payload)
       });
       if (!response.ok) {
-          const errData = await response.json().catch(()=>({}));
-          throw new Error(errData.details || errData.error || 'Generation failed');
+          const text = await response.text();
+          let errData: any = {};
+          try { errData = JSON.parse(text); } catch(e) {}
+          throw new Error(errData.details || errData.error || `Generation failed (HTTP ${response.status}: ${response.statusText}). Server response: ${text.substring(0,100)}`);
       }
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
