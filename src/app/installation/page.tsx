@@ -110,7 +110,9 @@ function InstallationForm() {
   }, [formData.panelQty]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let { name, value } = e.target;
+    if (name === 'picName') value = value.toUpperCase();
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleImageUpload = (name: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -649,12 +651,12 @@ function InstallationForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium mb-1">MHS No</label><input name="siteName" value={formData.siteName} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Customer Name</label><input name="customerName" value={formData.customerName} onChange={handleInputChange} className="input-field" /></div>
-              <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Address</label><input name="address" value={formData.address} onChange={handleInputChange} className="input-field" /></div>
+              <div className="md:col-span-2"><label className="block text-sm font-medium mb-1">Address</label><input name="address" value={formData.address} onChange={handleInputChange} onBlur={(e) => { if (e.target.value) locateEmergencyServices(e.target.value); }} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">Start Date</label><input type="date" name="startDate" value={formData.startDate} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">End Date</label><input type="date" name="endDate" value={formData.endDate} onChange={handleInputChange} className="input-field" /></div>
               <div><label className="block text-sm font-medium mb-1">System Size (kWp)</label><input name="systemSize" value={formData.systemSize} onChange={handleInputChange} className="input-field" /></div>
-              <div><label className="block text-sm font-medium mb-1">PIC Onsite Name</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
-              <div><label className="block text-sm font-medium mb-1">PIC Contact Number</label><input name="picNumber" value={formData.picNumber} onChange={handleInputChange} className="input-field bg-[hsl(var(--secondary))]" readOnly /></div>
+              <div><label className="block text-sm font-medium mb-1">PIC Onsite Name</label><input name="picName" value={formData.picName} onChange={handleInputChange} className="input-field" /></div>
+              <div><label className="block text-sm font-medium mb-1">PIC Contact Number</label><input name="picNumber" value={formData.picNumber} onChange={handleInputChange} className="input-field" /></div>
               
               <div>
                 <label className="block text-sm font-medium mb-1">Subcontractor</label>
