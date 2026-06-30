@@ -206,7 +206,7 @@ function InstallationForm() {
         const result = await res.json();
         const ocrVal = result.value || result.voltage;
         
-        if (mode === 'dongle') {
+        if (mode === 'dongle' || mode === 'inverterSn') {
           if (ocrVal) setFormData(prev => ({ ...prev, [field]: ocrVal }));
           setOcrLoading("");
           return;
@@ -678,6 +678,18 @@ function InstallationForm() {
                   </label>
                 </div>
                 <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Take a photo of the dongle box. The AI will find the S/N.</p>
+              </div>
+
+              <div className="md:col-span-2 mt-4">
+                <label className="block text-sm font-semibold mb-2">Inverter Serial Number (OCR)</label>
+                <div className="flex rounded-md shadow-sm">
+                  <input name="inverterSn" value={formData.inverterSn || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="e.g. SN12345678" />
+                  <label className="inline-flex items-center justify-center px-4 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
+                    {ocrLoading === 'inverterSn' ? <Loader2 className="animate-spin h-5 w-5" /> : <Camera className="h-5 w-5" />}
+                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleOcrScan('inverterSn', 'inverterSn', e, 'inverterSn')} />
+                  </label>
+                </div>
+                <p className="text-xs text-[hsl(var(--muted-foreground))] mt-1">Take a photo of the inverter serial number. The AI will find the S/N.</p>
               </div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>

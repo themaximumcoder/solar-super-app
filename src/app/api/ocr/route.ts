@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     const arrayBuffer = await file.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString('base64');
     
-    const prompt = mode === 'dongle' 
+    const prompt = (mode === 'dongle' || mode === 'inverterSn')
       ? 'Look at this label. Find the line that starts with S/N:. Return ONLY the exact serial number text that comes after S/N: . Do not include any other text.' 
       : 'Look at this multimeter screen. Return ONLY the main large voltage number displayed as a plain number (e.g. 240.5). Do NOT include the letter V, do not include units. If you cannot read it clearly, return NOT_FOUND.';
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const responseText = completion.choices[0].message.content || '';
     
     let resultVal = '';
-    if (mode === 'dongle') {
+    if (mode === 'dongle' || mode === 'inverterSn') {
       const snMatch = responseText.match(/(?:S\/N:\s*)?([A-Z0-9]+)/i);
       resultVal = snMatch ? snMatch[1] : responseText.trim();
     } else {
