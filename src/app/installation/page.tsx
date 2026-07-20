@@ -418,48 +418,45 @@ function InstallationForm() {
 
   const uploadAllBase64Images = async (data: any) => {
     const clone = JSON.parse(JSON.stringify(data));
-    const promises: Promise<void>[] = [];
 
-    const uploadSingle = async (base64Str: string, name: string, callback: (url: string) => void) => {
+    const uploadSingle = async (base64Str: string, name: string) => {
         if (typeof base64Str === 'string' && base64Str.startsWith('data:image/')) {
-            try {
-                const res = await fetch('/api/upload-image', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: base64Str, name })
-                });
-                if (res.ok) {
-                    const { url } = await res.json();
-                    callback(url);
-                }
-            } catch(e) {
-                console.error('Failed to upload image chunk', e);
+            const res = await fetch('/api/upload-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: base64Str, name })
+            });
+            if (res.ok) {
+                const { url } = await res.json();
+                return url;
+            } else {
+                throw new Error(`Failed to upload ${name}: HTTP ${res.status}`);
             }
         }
+        return base64Str;
     };
 
     for (const key of Object.keys(clone)) {
         if (typeof clone[key] === 'string' && clone[key].startsWith('data:image/')) {
-            promises.push(uploadSingle(clone[key], key, (url) => { clone[key] = url; }));
+            clone[key] = await uploadSingle(clone[key], key);
         }
     }
     
     if (Array.isArray(clone.bulkSerialImages)) {
         for (let i = 0; i < clone.bulkSerialImages.length; i++) {
             if (typeof clone.bulkSerialImages[i] === 'string' && clone.bulkSerialImages[i].startsWith('data:image/')) {
-               promises.push(uploadSingle(clone.bulkSerialImages[i], `bulk_${i}`, (url) => { clone.bulkSerialImages[i] = url; }));
+               clone.bulkSerialImages[i] = await uploadSingle(clone.bulkSerialImages[i], `bulk_${i}`);
             }
         }
     }
     if (Array.isArray(clone.postInstallPhaseImages)) {
         for (let i = 0; i < clone.postInstallPhaseImages.length; i++) {
             if (typeof clone.postInstallPhaseImages[i] === 'string' && clone.postInstallPhaseImages[i].startsWith('data:image/')) {
-               promises.push(uploadSingle(clone.postInstallPhaseImages[i], `post_${i}`, (url) => { clone.postInstallPhaseImages[i] = url; }));
+               clone.postInstallPhaseImages[i] = await uploadSingle(clone.postInstallPhaseImages[i], `post_${i}`);
             }
         }
     }
     
-    await Promise.all(promises);
     return clone;
   };
 
