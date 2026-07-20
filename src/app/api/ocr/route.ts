@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     const cfData = await cfRes.json();
     if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
     
-    const responseText = cfData.result?.response || '';
+    const responseText = String(cfData.result?.response || '');
     
     let resultVal = '';
     if (mode === 'dongle' || mode === 'inverterSn') {

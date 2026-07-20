@@ -70,7 +70,7 @@ Example output format: ["SN1234567890", "NOT_FOUND", "ABC987654321"]`;
                     const cfData = await cfRes.json();
                     if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
                     
-                    let text = cfData.result?.response || "NOT_FOUND";
+                    let text = String(cfData.result?.response || "NOT_FOUND");
                     return text.replace(/```json/g, '').replace(/```/g, '').trim();
                 });
                 
