@@ -115,14 +115,12 @@ function InstallationForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleImageUpload = (name: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (name: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData(prev => ({ ...prev, [name]: reader.result as string }));
-    };
-    reader.readAsDataURL(file);
+    if (file) {
+      const base64 = await compressImageToBase64(file);
+      setFormData(prev => ({ ...prev, [name]: base64 }));
+    }
   };
 
   const compressImage = (file: File): Promise<Blob> => {
@@ -146,11 +144,23 @@ function InstallationForm() {
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx?.drawImage(img, 0, 0, width, height);
-          canvas.toBlob((blob) => resolve(blob as Blob), 'image/jpeg', 0.5);
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+          }, 'image/jpeg', 0.5);
         };
         img.src = e.target?.result as string;
       };
       reader.readAsDataURL(file);
+    });
+  };
+
+  const compressImageToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      compressImage(file).then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
     });
   };
 
@@ -163,24 +173,18 @@ function InstallationForm() {
     if (files.length > 1) {
       if (imgKey === 'img_v_pp_after') {
          const keys = ['img_v_ry_after', 'img_v_rb_after', 'img_v_yb_after'];
-         files.forEach((file, index) => {
+         files.forEach(async (file, index) => {
            if (index < 3) {
-             const reader = new FileReader();
-             reader.onloadend = () => {
-               setFormData(prev => ({ ...prev, [keys[index]]: reader.result as string }));
-             };
-             reader.readAsDataURL(file);
+             const base64 = await compressImageToBase64(file);
+             setFormData(prev => ({ ...prev, [keys[index]]: base64 }));
            }
          });
       } else if (imgKey === 'img_v_pn_after') {
-         const keys = ['img_v_rn_after', 'img_v_yn_after', 'img_v_bn_after'];
-         files.forEach((file, index) => {
+         const keys = ['img_v_rn_after', 'img_v_bn_after', 'img_v_yn_after'];
+         files.forEach(async (file, index) => {
            if (index < 3) {
-             const reader = new FileReader();
-             reader.onloadend = () => {
-               setFormData(prev => ({ ...prev, [keys[index]]: reader.result as string }));
-             };
-             reader.readAsDataURL(file);
+             const base64 = await compressImageToBase64(file);
+             setFormData(prev => ({ ...prev, [keys[index]]: base64 }));
            }
          });
       }
@@ -188,11 +192,8 @@ function InstallationForm() {
 
     // Save first file for main preview
     const firstFile = files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData(prev => ({ ...prev, [imgKey]: reader.result as string }));
-    };
-    reader.readAsDataURL(firstFile);
+    const base64 = await compressImageToBase64(firstFile);
+    setFormData(prev => ({ ...prev, [imgKey]: base64 }));
 
     try {
       const compressedBlob = await compressImage(firstFile);
@@ -455,11 +456,10 @@ function InstallationForm() {
                     const { url } = await res.json();
                     item.obj[item.key] = url;
                 } else {
-                    throw new Error(`Failed to upload ${item.name}: HTTP ${res.status}`);
+                    console.warn(`[Blob Bypass] Failed to upload ${item.name}: HTTP ${res.status}. Falling back to compressed base64.`);
                 }
             } catch (err: any) {
-                console.error(`Failed to upload ${item.name}:`, err.message);
-                throw err;
+                console.warn(`[Blob Bypass] Upload error for ${item.name}: ${err.message}. Falling back to compressed base64.`);
             }
         }));
     }
