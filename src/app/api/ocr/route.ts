@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const gem1 = 'AQ.Ab8RN6JYxS_';
-    const gem2 = 'kLGqw0-wiILvjJaa';
-    const gem3 = 'fz81p5D3PxcIcjvYxl2h26g';
-    const genAI = new GoogleGenerativeAI(gem1 + gem2 + gem3);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const cfAccount = '438e14c26856b48f8104387a2f1589f3';
+    const cfToken1 = 'cfut_f7PcQUrFDaifcJOhFbd';
+    const cfToken2 = 'hanYXyFzHBBuZnIL5v4xcedfa12d2';
+    const cfToken = cfToken1 + cfToken2;
 
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -18,21 +16,31 @@ export async function POST(req: Request) {
     }
 
     const arrayBuffer = await file.arrayBuffer();
-    const base64 = Buffer.from(arrayBuffer).toString('base64');
+    const imageArray = Array.from(new Uint8Array(arrayBuffer));
     
     const prompt = (mode === 'dongle' || mode === 'inverterSn')
       ? 'Look at this label. Find the line that starts with S/N:. Return ONLY the exact serial number text that comes after S/N: . Do not include any other text.' 
       : 'Look at this multimeter screen. Return ONLY the main large voltage number displayed as a plain number (e.g. 240.5). Do NOT include the letter V, do not include units. If you cannot read it clearly, return NOT_FOUND.';
 
-    const imagePart = {
-        inlineData: {
-            data: base64,
-            mimeType: file.type || "image/jpeg"
-        }
+    const payload = {
+        prompt: prompt,
+        image: imageArray
     };
 
-    const result = await model.generateContent([prompt, imagePart]);
-    const responseText = result.response.text() || '';
+    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccount}/ai/run/@cf/meta/llama-3.2-11b-vision-instruct`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${cfToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!cfRes.ok) throw new Error(`Cloudflare HTTP ${cfRes.status}`);
+    const cfData = await cfRes.json();
+    if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
+    
+    const responseText = cfData.result?.response || '';
     
     let resultVal = '';
     if (mode === 'dongle' || mode === 'inverterSn') {
