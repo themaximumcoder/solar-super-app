@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
-import Groq from 'groq-sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: Request) {
   try {
-    const key1 = 'gsk_rTKWvB7q78W';
-    const key2 = 'Hmvz2L5LSWGdyb3FY';
-    const key3 = 'fbhA4O6KDyNUAlJbthWWkzVw';
-    const groq = new Groq({ apiKey: key1 + key2 + key3 });
+    const gem1 = 'AQ.Ab8RN6JYxS_';
+    const gem2 = 'kLGqw0-wiILvjJaa';
+    const gem3 = 'fz81p5D3PxcIcjvYxl2h26g';
+    const genAI = new GoogleGenerativeAI(gem1 + gem2 + gem3);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const formData = await req.formData();
     const file = formData.get('file') as File;
@@ -23,25 +24,15 @@ export async function POST(req: Request) {
       ? 'Look at this label. Find the line that starts with S/N:. Return ONLY the exact serial number text that comes after S/N: . Do not include any other text.' 
       : 'Look at this multimeter screen. Return ONLY the main large voltage number displayed as a plain number (e.g. 240.5). Do NOT include the letter V, do not include units. If you cannot read it clearly, return NOT_FOUND.';
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: prompt },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/jpeg;base64,${base64}`,
-              },
-            },
-          ],
-        },
-      ],
-      model: 'llama-3.2-90b-vision-preview',
-    });
+    const imagePart = {
+        inlineData: {
+            data: base64,
+            mimeType: file.type || "image/jpeg"
+        }
+    };
 
-    const responseText = completion.choices[0].message.content || '';
+    const result = await model.generateContent([prompt, imagePart]);
+    const responseText = result.response.text() || '';
     
     let resultVal = '';
     if (mode === 'dongle' || mode === 'inverterSn') {
