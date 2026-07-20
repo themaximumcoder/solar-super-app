@@ -231,10 +231,17 @@ export async function POST(req: Request) {
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
     
-    // Save to Vercel Blob
+    // Save to Vercel Blob with Graceful Fallback
     const safeMhs = (data.siteName || 'Report').replace(/[^a-zA-Z0-9_-]/g, '') || 'Report';
     const fileName = `${safeMhs}.docx`;
-    const blob = await put(`reports/${fileName}`, buf, { access: 'public', addRandomSuffix: true });
+    let documentUrl = '';
+    
+    try {
+        const blob = await put(`reports/${fileName}`, buf, { access: 'public', addRandomSuffix: true });
+        documentUrl = blob.url;
+    } catch (e: any) {
+        console.warn('Vercel Blob storage failed (quota exceeded). Skipping database URL save.', e.message);
+    }
 
     let engineerId = null;
     if (data.engineer_ic) {
@@ -254,7 +261,7 @@ export async function POST(req: Request) {
                 address: data.address || '',
                 systemSize: data.systemSize || '',
                 picOnsite: data.picName || '',
-                documentUrl: blob.url,
+                documentUrl: documentUrl,
                 engineerId: engineerId
             }
         });
@@ -267,7 +274,7 @@ export async function POST(req: Request) {
                 address: data.address || '',
                 systemSize: data.systemSize || '',
                 picOnsite: data.picName || '',
-                documentUrl: blob.url,
+                documentUrl: documentUrl,
                 engineerId: engineerId
             }
         });
