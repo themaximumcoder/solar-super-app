@@ -27,18 +27,31 @@ export async function POST(req: Request) {
         image: imageArray
     };
 
-    const cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccount}/ai/run/@cf/meta/llama-3.2-11b-vision-instruct`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${cfToken}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    });
+    let cfRes;
+    let cfData;
+    let retries = 0;
+    while (retries < 3) {
+        try {
+            cfRes = await fetch(`https://api.cloudflare.com/client/v4/accounts/${cfAccount}/ai/run/@cf/meta/llama-3.2-11b-vision-instruct`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${cfToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
 
-    if (!cfRes.ok) throw new Error(`Cloudflare HTTP ${cfRes.status}`);
-    const cfData = await cfRes.json();
-    if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
+            if (!cfRes.ok) throw new Error(`Cloudflare HTTP ${cfRes.status}`);
+            cfData = await cfRes.json();
+            if (!cfData.success) throw new Error(`CF Error: ${JSON.stringify(cfData.errors)}`);
+            break; 
+        } catch (err: any) {
+            console.error(`OCR Retry ${retries + 1} failed:`, err.message);
+            retries++;
+            if (retries >= 3) throw err;
+            await new Promise(r => setTimeout(r, 1000));
+        }
+    }
     
     const responseText = String(cfData.result?.response || '');
     

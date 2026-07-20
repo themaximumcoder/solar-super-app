@@ -418,43 +418,50 @@ function InstallationForm() {
 
   const uploadAllBase64Images = async (data: any) => {
     const clone = JSON.parse(JSON.stringify(data));
-
-    const uploadSingle = async (base64Str: string, name: string) => {
-        if (typeof base64Str === 'string' && base64Str.startsWith('data:image/')) {
-            const res = await fetch('/api/upload-image', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: base64Str, name })
-            });
-            if (res.ok) {
-                const { url } = await res.json();
-                return url;
-            } else {
-                throw new Error(`Failed to upload ${name}: HTTP ${res.status}`);
-            }
-        }
-        return base64Str;
-    };
+    const itemsToUpload: { obj: any, key: string | number, base64: string, name: string }[] = [];
 
     for (const key of Object.keys(clone)) {
         if (typeof clone[key] === 'string' && clone[key].startsWith('data:image/')) {
-            clone[key] = await uploadSingle(clone[key], key);
+            itemsToUpload.push({ obj: clone, key, base64: clone[key], name: key });
         }
     }
     
     if (Array.isArray(clone.bulkSerialImages)) {
         for (let i = 0; i < clone.bulkSerialImages.length; i++) {
             if (typeof clone.bulkSerialImages[i] === 'string' && clone.bulkSerialImages[i].startsWith('data:image/')) {
-               clone.bulkSerialImages[i] = await uploadSingle(clone.bulkSerialImages[i], `bulk_${i}`);
+               itemsToUpload.push({ obj: clone.bulkSerialImages, key: i, base64: clone.bulkSerialImages[i], name: `bulk_${i}` });
             }
         }
     }
     if (Array.isArray(clone.postInstallPhaseImages)) {
         for (let i = 0; i < clone.postInstallPhaseImages.length; i++) {
             if (typeof clone.postInstallPhaseImages[i] === 'string' && clone.postInstallPhaseImages[i].startsWith('data:image/')) {
-               clone.postInstallPhaseImages[i] = await uploadSingle(clone.postInstallPhaseImages[i], `post_${i}`);
+               itemsToUpload.push({ obj: clone.postInstallPhaseImages, key: i, base64: clone.postInstallPhaseImages[i], name: `post_${i}` });
             }
         }
+    }
+
+    const CONCURRENCY = 5;
+    for (let i = 0; i < itemsToUpload.length; i += CONCURRENCY) {
+        const batch = itemsToUpload.slice(i, i + CONCURRENCY);
+        await Promise.all(batch.map(async (item) => {
+            try {
+                const res = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: item.base64, name: item.name })
+                });
+                if (res.ok) {
+                    const { url } = await res.json();
+                    item.obj[item.key] = url;
+                } else {
+                    throw new Error(`Failed to upload ${item.name}: HTTP ${res.status}`);
+                }
+            } catch (err: any) {
+                console.error(`Failed to upload ${item.name}:`, err.message);
+                throw err;
+            }
+        }));
     }
     
     return clone;
