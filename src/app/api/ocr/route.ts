@@ -38,7 +38,7 @@ export async function POST(req: Request) {
           ],
         },
       ],
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      model: 'llama-3.2-90b-vision-preview',
     });
 
     const responseText = completion.choices[0].message.content || '';

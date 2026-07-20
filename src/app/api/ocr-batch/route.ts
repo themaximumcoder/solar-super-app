@@ -16,9 +16,8 @@ const genAI = new GoogleGenerativeAI(gem1 + gem2 + gem3);
 // Advanced Fallback Engine Chain
 const FALLBACK_CHAIN = [
     { provider: 'cloudflare', id: '@cf/meta/llama-3.2-11b-vision-instruct' },
-    { provider: 'groq', id: 'meta-llama/llama-4-scout-17b-16e-instruct' },
-    { provider: 'groq', id: 'qwen/qwen3.6-27b' },
-    { provider: 'gemini', id: 'gemini-2.5-flash' }
+    { provider: 'groq', id: 'llama-3.2-90b-vision-preview' },
+    { provider: 'gemini', id: 'gemini-1.5-pro' }
 ];
 
 export async function POST(req: Request) {
