@@ -37,16 +37,21 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           <p className="text-[hsl(var(--muted-foreground))]">View previously generated Site Acceptance Reports.</p>
         </div>
         
-        {engineer && (
-            <div className="flex bg-[hsl(var(--secondary))] p-1 rounded-xl">
-                <Link href="/dashboard?view=me" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'me' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
-                    My Reports
-                </Link>
-                <Link href="/dashboard?view=all" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'all' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
-                    All Reports
-                </Link>
-            </div>
-        )}
+        <div className="flex items-center gap-4">
+            <Link href="/site-visit-proposal" className="btn-primary flex items-center justify-center rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-medium px-4 py-2">
+                Site Visit Proposal Tool
+            </Link>
+            {engineer && (
+                <div className="flex bg-[hsl(var(--secondary))] p-1 rounded-xl">
+                    <Link href="/dashboard?view=me" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'me' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
+                        My Reports
+                    </Link>
+                    <Link href="/dashboard?view=all" className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'all' ? 'bg-[hsl(var(--background))] shadow-sm text-[hsl(var(--foreground))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}>
+                        All Reports
+                    </Link>
+                </div>
+            )}
+        </div>
       </div>
 
       <div className="glass-panel p-6 rounded-2xl">
