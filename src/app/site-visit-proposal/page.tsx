@@ -3,10 +3,7 @@ import { useState, useRef, useEffect, MouseEvent, TouchEvent } from 'react';
 import Link from 'next/link';
 import pptxgen from 'pptxgenjs';
 import jsPDF from 'jspdf';
-import { Navbar } from '@/components/Navbar';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { ArrowLeft } from 'lucide-react';
 
 export default function SiteVisitProposal() {
   const [mhsNumber, setMhsNumber] = useState('');
@@ -152,58 +149,74 @@ export default function SiteVisitProposal() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar title="Site Visit Proposal" showBack href="/dashboard" />
+    <div className="min-h-screen bg-[hsl(var(--background))] flex flex-col pb-20">
+      <div className="bg-[hsl(var(--secondary))] text-[hsl(var(--foreground))] p-4 flex items-center shadow-sm relative z-10 sticky top-0">
+        <Link href="/dashboard" className="mr-4 hover:bg-[hsl(var(--primary))/0.1] p-2 rounded-full transition-colors">
+          <ArrowLeft size={24} />
+        </Link>
+        <h1 className="text-xl font-bold">Site Visit Proposal</h1>
+      </div>
       
-      <main className="flex-1 p-4 max-w-5xl mx-auto w-full">
+      <main className="flex-1 p-4 max-w-5xl mx-auto w-full mt-6">
         <div className="space-y-6">
           
-          <Card>
-            <CardHeader>
-              <CardTitle>Proposal Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="glass-panel p-6 rounded-2xl border border-[hsl(var(--border))]">
+            <h2 className="text-xl font-semibold mb-4">Proposal Details</h2>
+            <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">MHS Number</label>
-                <Input placeholder="e.g. MHS12345" value={mhsNumber} onChange={e => setMhsNumber(e.target.value)} />
+                <label className="block text-sm font-medium mb-1">MHS Number</label>
+                <input 
+                  type="text"
+                  placeholder="e.g. MHS12345" 
+                  value={mhsNumber} 
+                  onChange={e => setMhsNumber(e.target.value)} 
+                  className="input-field"
+                />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Customer Name</label>
-                <Input placeholder="e.g. John Doe" value={customerName} onChange={e => setCustomerName(e.target.value)} />
+                <label className="block text-sm font-medium mb-1">Customer Name</label>
+                <input 
+                  type="text"
+                  placeholder="e.g. John Doe" 
+                  value={customerName} 
+                  onChange={e => setCustomerName(e.target.value)} 
+                  className="input-field"
+                />
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Site Drawing Canvas</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="glass-panel p-6 rounded-2xl border border-[hsl(var(--border))]">
+            <h2 className="text-xl font-semibold mb-4">Site Drawing Canvas</h2>
+            <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                <Input type="file" accept="image/*" onChange={handleImageUpload} className="max-w-xs" />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="input-field max-w-xs" />
                 
                 {imageLoaded && (
                   <div className="flex gap-2 flex-wrap">
-                    <Button 
-                      variant={color === '#FFFF00' ? 'default' : 'outline'} 
+                    <button 
                       onClick={() => setColor('#FFFF00')}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-black border-yellow-500"
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${color === '#FFFF00' ? 'bg-yellow-400 text-black shadow-md ring-2 ring-yellow-500 ring-offset-2' : 'bg-transparent border border-yellow-500 text-yellow-600 hover:bg-yellow-50'}`}
                     >
                       AC Wiring (Yellow)
-                    </Button>
-                    <Button 
-                      variant={color === '#0000FF' ? 'default' : 'outline'} 
+                    </button>
+                    <button 
                       onClick={() => setColor('#0000FF')}
-                      className="bg-blue-600 hover:bg-blue-700 text-white border-blue-700"
+                      className={`px-4 py-2 rounded-lg font-medium transition-all ${color === '#0000FF' ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-500 ring-offset-2' : 'bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-50'}`}
                     >
                       DC Wiring (Blue)
-                    </Button>
-                    <Button variant="outline" onClick={clearDrawing}>Clear Drawing</Button>
+                    </button>
+                    <button 
+                      onClick={clearDrawing}
+                      className="px-4 py-2 rounded-lg font-medium bg-transparent border border-gray-300 text-gray-700 hover:bg-gray-100 transition-all"
+                    >
+                      Clear Drawing
+                    </button>
                   </div>
                 )}
               </div>
 
-              <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-100 flex justify-center mt-4">
+              <div className="border-2 border-dashed border-[hsl(var(--border))] rounded-xl overflow-hidden bg-[hsl(var(--secondary))] flex justify-center mt-4">
                 <canvas 
                   ref={canvasRef}
                   className="max-w-full cursor-crosshair touch-none"
@@ -217,7 +230,7 @@ export default function SiteVisitProposal() {
                   onTouchCancel={stopDrawing}
                 />
                 {!imageLoaded && (
-                  <div className="h-64 flex items-center justify-center text-gray-400 p-8 text-center">
+                  <div className="h-64 flex items-center justify-center text-[hsl(var(--muted-foreground))] p-8 text-center">
                     Please upload a site photo to start drawing the inverter and wiring layout.
                   </div>
                 )}
@@ -225,16 +238,16 @@ export default function SiteVisitProposal() {
 
               {imageLoaded && (
                  <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                   <Button onClick={exportPDF} className="flex-1 bg-red-600 hover:bg-red-700 text-white">
+                   <button onClick={exportPDF} className="btn-primary flex-1 bg-red-600 hover:bg-red-700 text-white border-none">
                      Export as PDF
-                   </Button>
-                   <Button onClick={exportPPTX} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white">
+                   </button>
+                   <button onClick={exportPPTX} className="btn-primary flex-1 bg-orange-600 hover:bg-orange-700 text-white border-none">
                      Export as PPTX
-                   </Button>
+                   </button>
                  </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
           
         </div>
       </main>
