@@ -39,7 +39,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         
         <div className="flex items-center gap-4">
             <Link href="/site-visit-proposal" className="btn-primary flex items-center justify-center rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-medium px-4 py-2">
-                Site Visit Proposal Tool
+                Maxis Site Pack Tool
             </Link>
             {engineer && (
                 <div className="flex bg-[hsl(var(--secondary))] p-1 rounded-xl">

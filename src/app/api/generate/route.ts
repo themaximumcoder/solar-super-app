@@ -18,11 +18,19 @@ const emptyPixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAA
 async function resolveImage(tagValue: string) {
     if (!tagValue || tagValue === '') return emptyPixel;
     try {
-        if (tagValue.startsWith('data:image/')) {
-            const base64Data = tagValue.split(',')[1];
+        let val = tagValue;
+        if (tagValue.startsWith('[')) {
+           try {
+             const parsed = JSON.parse(tagValue);
+             if (Array.isArray(parsed) && parsed.length > 0) val = parsed[0];
+           } catch(e) {}
+        }
+        
+        if (val.startsWith('data:image/')) {
+            const base64Data = val.split(',')[1];
             return Buffer.from(base64Data, 'base64');
         }
-        const response = await fetch(tagValue);
+        const response = await fetch(val);
         if (!response.ok) return emptyPixel;
         const arrayBuffer = await response.arrayBuffer();
         return Buffer.from(arrayBuffer);

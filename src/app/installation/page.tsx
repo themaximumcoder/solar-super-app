@@ -116,11 +116,16 @@ function InstallationForm() {
   };
 
   const handleImageUpload = (name: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const base64 = await compressImageToBase64(file);
-      setFormData(prev => ({ ...prev, [name]: base64 }));
-    }
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
+    setFormData(prev => {
+      let existing = [];
+      if (prev[name]) {
+        try { existing = JSON.parse(prev[name]); } catch(err) { existing = [prev[name]]; }
+      }
+      return { ...prev, [name]: JSON.stringify([...existing, ...base64s]) };
+    });
   };
 
   const compressImage = (file: File): Promise<Blob> => {
@@ -697,8 +702,15 @@ function InstallationForm() {
               </div>
               
               <div className="md:col-span-2 mt-4"><h3 className="text-lg font-semibold">Equipment</h3></div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Solar Panel Type</label>
+                <select name="panelSpecs" value={formData.panelSpecs || ''} onChange={handleInputChange} className="input-field">
+                  <option value="">Select Panel Type...</option>
+                  <option value="630W Trina">630W Trina</option>
+                  <option value="620W">620W</option>
+                </select>
+              </div>
               <div><label className="block text-sm font-medium mb-1">Panel Quantity</label><input type="number" name="panelQty" value={formData.panelQty} onChange={handleInputChange} className="input-field" /></div>
-              
               {formData.panelQty && (pvSpecs as any)[formData.panelQty] && (
                 <div className="md:col-span-2 mt-2 bg-[hsl(var(--primary)/0.1)] border border-[hsl(var(--primary)/0.3)] rounded-lg p-4">
                   <h4 className="flex items-center text-sm font-bold text-[hsl(var(--primary))] mb-2"><Info className="w-4 h-4 mr-2"/> Required Equipment Specs (Auto-Detected for {formData.panelQty} PVs)</h4>

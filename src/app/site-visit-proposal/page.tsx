@@ -145,7 +145,7 @@ export default function SiteVisitProposal() {
     pdf.addImage(dataUrl, 'JPEG', 14, 35, imgWidth, imgHeight);
     
     const safeName = (mhsNumber || 'MHS').replace(/[^a-zA-Z0-9_-]/g, '');
-    pdf.save(`${safeName}_${customerName || 'Customer'}_Home_Solar_Technical_Proposal_Template_R1.pdf`);
+    pdf.save(`${safeName}_${customerName || 'Customer'}_Maxis_Site_Pack_R1.pdf`);
   };
 
   return (
@@ -154,7 +154,7 @@ export default function SiteVisitProposal() {
         <Link href="/dashboard" className="mr-4 hover:bg-[hsl(var(--primary))/0.1] p-2 rounded-full transition-colors">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-xl font-bold">Site Visit Proposal</h1>
+        <h1 className="text-xl font-bold">Maxis Site Pack</h1>
       </div>
       
       <main className="flex-1 p-4 max-w-5xl mx-auto w-full mt-6">
