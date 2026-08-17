@@ -93,7 +93,8 @@ export async function POST(req: Request) {
         data.img_solar_layout = 'img_solar_layout';
     }
 
-    doc.render(data);
+    (doc as any).setData(data);
+    (doc as any).render();
 
     const buf = doc.getZip().generate({
         type: 'nodebuffer',
