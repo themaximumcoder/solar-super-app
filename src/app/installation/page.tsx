@@ -118,14 +118,48 @@ function InstallationForm() {
   const handleImageUpload = (name: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
+    
+    // Convert all to base64 first
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
-    setFormData(prev => {
-      let existing = [];
-      if (prev[name]) {
-        try { existing = JSON.parse(prev[name]); } catch(err) { existing = [prev[name]]; }
-      }
-      return { ...prev, [name]: JSON.stringify([...existing, ...base64s]) };
-    });
+    
+    if (base64s.length === 1) {
+      setFormData(prev => ({ ...prev, [name]: base64s[0] }));
+      return;
+    }
+
+    // Stitch images vertically if multiple
+    const images = await Promise.all(base64s.map(src => {
+        return new Promise<HTMLImageElement>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = src;
+        });
+    }));
+
+    const maxWidth = Math.max(...images.map(img => img.width));
+    const gap = 20; // gap between images
+    const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = maxWidth;
+    canvas.height = totalHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        let currentY = 0;
+        for (const img of images) {
+            // Center each image horizontally
+            const x = (maxWidth - img.width) / 2;
+            ctx.drawImage(img, x, currentY);
+            currentY += img.height + gap;
+        }
+    }
+
+    const stitchedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    setFormData(prev => ({ ...prev, [name]: stitchedBase64 }));
   };
 
   const compressImage = (file: File): Promise<Blob> => {
@@ -781,20 +815,25 @@ function InstallationForm() {
                 { id: "img_inspection", label: "Equipment Inspection" },
                 { id: "img_skylift", label: "Sky Lift Photos" }
               ].map((img) => (
-                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex items-center ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
-                  {formData[img.id] ? (
-                    <img src={formData[img.id]} alt={img.label} className="w-16 h-16 object-cover rounded-lg mr-4 border" />
-                  ) : (
-                    <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
-                      <Camera size={24} />
+                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex flex-col ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
+                  <div className="flex items-center">
+                    {formData[img.id] ? (
+                      <img src={formData[img.id]} alt={img.label} className="w-16 h-16 object-cover rounded-lg mr-4 border flex-shrink-0" />
+                    ) : (
+                      <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))] flex-shrink-0">
+                        <Upload size={24} />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm mb-1">{img.label}</p>
+                      <label className="btn-primary py-1.5 px-3 text-xs inline-flex cursor-pointer">
+                        <Camera size={14} className="mr-1" /> {formData[img.id] ? "Replace" : "Capture"}
+                        <input type="file" multiple accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload(img.id)} />
+                      </label>
+                      {formData[img.id] && (
+                        <button onClick={() => setFormData(prev => ({...prev, [img.id]: ""}))} className="ml-2 text-xs text-red-500 hover:underline">Clear</button>
+                      )}
                     </div>
-                  )}
-                  <div className="flex-1">
-                    <span className="text-sm font-medium block">{img.label}</span>
-                    <label className="text-xs text-[hsl(var(--primary))] cursor-pointer font-bold mt-1 inline-block hover:underline">
-                      {formData[img.id] ? "Change Photo" : "Upload Photo"}
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload(img.id)} />
-                    </label>
                   </div>
                 </div>
               ))}

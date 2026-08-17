@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     const imageMap = new Map<string, Buffer>();
 
     const imageOptions = {
-        centered: false,
+        centered: true,
         getImage: function(tagValue: any) {
             return imageMap.get(tagValue) || emptyPixel;
         },
