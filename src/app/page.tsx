@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { PenTool, ClipboardCheck, ArrowRight, Zap, Battery, Activity } from "lucide-react";
+import { PenTool, ClipboardCheck, ArrowRight, Zap, Battery, Activity, FileText } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
