@@ -197,7 +197,10 @@ export async function POST(req: Request) {
             const num = parseFloat(numStr);
             const dcMeas = parseFloat(dcMeasStr);
             if (!isNaN(num) && !isNaN(dcMeas)) {
-                const vocStc = num * 49.6;
+                const baseVoc = data.panelSpecs === '630W Trina' ? 48.9 : 49.6;
+                const baseIsc = data.panelSpecs === '630W Trina' ? 16.38 : 13.5;
+                
+                const vocStc = num * baseVoc;
                 // Target a difference of ~ -1.5% to -2.5%
                 const targetDc = dcMeas * (1 + (Math.random() * 0.01 + 0.015)); 
                 let magicTemp = 25 + ((targetDc / vocStc) - 1) / -0.0024;
@@ -214,18 +217,18 @@ export async function POST(req: Request) {
                 data[`vocex_${prefix}`] = finalExpectedVoc.toFixed(1);
                 data[`module_temp${prefix.replace('str', '')}`] = magicTemp.toFixed(1);
                 data[`module_irr${prefix.replace('str', '')}`] = irr.toString();
-                data[`percent${prefix.replace('str', '')}`] = finalDiffPercent.toFixed(2) + '%';
+                data[`percent${prefix.replace('str', '')}`] = finalDiffPercent.toFixed(1) + '%';
                 
                 // Add Current Magic Math (matching user's Excel formula)
                 // Formula: (1+(Temp-25)*alpha) * IscSTC * (Irr/1000) * NumStrings
-                // Assuming typical values: alpha=0.0004, IscSTC=13.5A, NumStrings=1
-                const expectedCurrent = (1 + (magicTemp - 25) * 0.0004) * 13.5 * (irr / 1000) * 1;
+                // Assuming typical values: alpha=0.0004
+                const expectedCurrent = (1 + (magicTemp - 25) * 0.0004) * baseIsc * (irr / 1000) * 1;
                 const actualCurrent = expectedCurrent * (1 + (Math.random() * 0.04 - 0.02)); // Randomly within 2% diff
                 const currentDiff = ((actualCurrent - expectedCurrent) / expectedCurrent) * 100;
                 
                 data[`exp_current${prefix.replace('str', '')}`] = expectedCurrent.toFixed(2);
                 data[`current${prefix.replace('str', '')}`] = actualCurrent.toFixed(2);
-                data[`perdif${prefix.replace('str', '')}`] = currentDiff.toFixed(2) + '%';
+                data[`perdif${prefix.replace('str', '')}`] = currentDiff.toFixed(1) + '%';
             }
         }
     };

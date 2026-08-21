@@ -10,6 +10,7 @@ export default function SignUp() {
     firstName: "",
     phone: "",
     icNumber: "",
+    email: "",
     password: ""
   });
   const [error, setError] = useState("");
@@ -95,6 +96,11 @@ export default function SignUp() {
             <div>
               <label className="block text-sm font-medium mb-1">IC Number</label>
               <input type="text" name="icNumber" value={formData.icNumber} onChange={handleInputChange} className="input-field" placeholder="e.g. 900101145555" required />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Email Address</label>
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="input-field" placeholder="your.email@example.com" required />
             </div>
 
             <div>

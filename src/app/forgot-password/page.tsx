@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { KeyRound, ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { KeyRound, ArrowLeft, Mail, Lock } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function ForgotPassword() {
-  const [icNumber, setIcNumber] = useState("");
-  const [phone, setPhone] = useState("");
+  const [step, setStep] = useState<1 | 2>(1);
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   
@@ -16,6 +17,37 @@ export default function ForgotPassword() {
   const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const res = await fetch("/api/auth/send-reset-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess("Verification code sent to your email!");
+        setTimeout(() => {
+            setStep(2);
+            setSuccess("");
+        }, 1500);
+      } else {
+        setError(data.error || "Failed to send code");
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +65,7 @@ export default function ForgotPassword() {
       const res = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ icNumber, phone, newPassword }),
+        body: JSON.stringify({ email, code, newPassword }),
       });
 
       const data = await res.json();
@@ -70,84 +102,142 @@ export default function ForgotPassword() {
               <KeyRound size={32} />
             </div>
             <h1 className="text-2xl font-bold text-center">Reset Password</h1>
-            <p className="text-[hsl(var(--muted-foreground))] text-sm text-center mt-2">Verify your identity to create a new password</p>
+            <p className="text-[hsl(var(--muted-foreground))] text-sm text-center mt-2">
+                {step === 1 ? "Enter your email to receive a verification code" : "Enter the code sent to your email and your new password"}
+            </p>
           </div>
 
-          <form onSubmit={handleReset} className="space-y-4">
-            {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm rounded-lg text-center">
-                {error}
-              </div>
+          <AnimatePresence mode="wait">
+            {step === 1 ? (
+                <motion.form 
+                    key="step1"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    onSubmit={handleSendCode} 
+                    className="space-y-4"
+                >
+                    {error && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm rounded-lg text-center">
+                        {error}
+                    </div>
+                    )}
+                    
+                    {success && (
+                    <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-500 text-sm rounded-lg text-center">
+                        {success}
+                    </div>
+                    )}
+                    
+                    <div>
+                    <label className="block text-sm font-medium mb-1">Email Address</label>
+                    <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                        <input 
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="input-field pl-10"
+                            placeholder="your.email@example.com"
+                            required
+                        />
+                    </div>
+                    </div>
+
+                    <button 
+                    type="submit" 
+                    disabled={isLoading || !!success}
+                    className="btn-primary w-full mt-6"
+                    >
+                    {isLoading ? "Sending..." : "Send Verification Code"}
+                    </button>
+                    
+                    <div className="text-center mt-6">
+                    <Link href="/login" className="inline-flex items-center text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
+                        <ArrowLeft className="w-4 h-4 mr-1" /> Back to Login
+                    </Link>
+                    </div>
+                </motion.form>
+            ) : (
+                <motion.form 
+                    key="step2"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    onSubmit={handleReset} 
+                    className="space-y-4"
+                >
+                    {error && (
+                    <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 text-sm rounded-lg text-center">
+                        {error}
+                    </div>
+                    )}
+                    
+                    {success && (
+                    <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-500 text-sm rounded-lg text-center">
+                        {success}
+                    </div>
+                    )}
+                    
+                    <div>
+                    <label className="block text-sm font-medium mb-1">Verification Code</label>
+                    <input 
+                        type="text"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        className="input-field tracking-widest text-center text-lg"
+                        placeholder="000000"
+                        maxLength={6}
+                        required
+                    />
+                    </div>
+
+                    <div>
+                    <label className="block text-sm font-medium mb-1">New Password</label>
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                        <input 
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            className="input-field pl-10"
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
+                    </div>
+
+                    <div>
+                    <label className="block text-sm font-medium mb-1">Confirm New Password</label>
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                        <input 
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            className="input-field pl-10"
+                            placeholder="••••••••"
+                            required
+                        />
+                    </div>
+                    </div>
+
+                    <button 
+                    type="submit" 
+                    disabled={isLoading || !!success}
+                    className="btn-primary w-full mt-6"
+                    >
+                    {isLoading ? "Verifying..." : "Reset Password"}
+                    </button>
+                    
+                    <div className="text-center mt-6">
+                    <button type="button" onClick={() => setStep(1)} className="inline-flex items-center text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
+                        <ArrowLeft className="w-4 h-4 mr-1" /> Back to Email Entry
+                    </button>
+                    </div>
+                </motion.form>
             )}
-            
-            {success && (
-              <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-500 text-sm rounded-lg text-center">
-                {success}
-              </div>
-            )}
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">IC Number</label>
-              <input 
-                type="text"
-                value={icNumber}
-                onChange={(e) => setIcNumber(e.target.value.replace(/-/g, ''))}
-                className="input-field"
-                placeholder="Enter IC Number (e.g. 900101145555)"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Registered Phone Number</label>
-              <input 
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="input-field"
-                placeholder="Enter Phone Number (e.g. 0123456789)"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">New Password</label>
-              <input 
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                className="input-field"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Confirm New Password</label>
-              <input 
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="input-field"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={isLoading || !!success}
-              className="btn-primary w-full mt-6"
-            >
-              {isLoading ? "Verifying..." : "Reset Password"}
-            </button>
-            
-            <div className="text-center mt-6">
-              <Link href="/login" className="inline-flex items-center text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back to Login
-              </Link>
-            </div>
-          </form>
+          </AnimatePresence>
         </div>
       </motion.div>
     </div>
