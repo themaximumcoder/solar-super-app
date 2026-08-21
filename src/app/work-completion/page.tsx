@@ -65,7 +65,18 @@ export default function WorkCompletion() {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
-    setFormData(prev => ({ ...prev, img_solar_layout: JSON.stringify(base64s) }));
+    setFormData(prev => {
+       let existing = [];
+       if (prev.img_solar_layout) {
+          try {
+             existing = JSON.parse(prev.img_solar_layout);
+             if (!Array.isArray(existing)) existing = [prev.img_solar_layout];
+          } catch {
+             existing = [prev.img_solar_layout];
+          }
+       }
+       return { ...prev, img_solar_layout: JSON.stringify([...existing, ...base64s]) };
+    });
   };
 
   const stitchImages = async (base64s: string[]): Promise<string> => {

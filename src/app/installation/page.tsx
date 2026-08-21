@@ -118,48 +118,20 @@ function InstallationForm() {
   const handleImageUpload = (name: string) => async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
-    
-    // Convert all to base64 first
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
     
-    if (base64s.length === 1) {
-      setFormData(prev => ({ ...prev, [name]: base64s[0] }));
-      return;
-    }
-
-    // Stitch images vertically if multiple
-    const images = await Promise.all(base64s.map(src => {
-        return new Promise<HTMLImageElement>((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.src = src;
-        });
-    }));
-
-    const maxWidth = Math.max(...images.map(img => img.width));
-    const gap = 20; // gap between images
-    const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
-
-    const canvas = document.createElement('canvas');
-    canvas.width = maxWidth;
-    canvas.height = totalHeight;
-    const ctx = canvas.getContext('2d');
-    
-    if (ctx) {
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        let currentY = 0;
-        for (const img of images) {
-            // Center each image horizontally
-            const x = (maxWidth - img.width) / 2;
-            ctx.drawImage(img, x, currentY);
-            currentY += img.height + gap;
-        }
-    }
-
-    const stitchedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-    setFormData(prev => ({ ...prev, [name]: stitchedBase64 }));
+    setFormData(prev => {
+       let existing = [];
+       if (prev[name]) {
+          try {
+             existing = JSON.parse(prev[name]);
+             if (!Array.isArray(existing)) existing = [prev[name]];
+          } catch {
+             existing = [prev[name]];
+          }
+       }
+       return { ...prev, [name]: JSON.stringify([...existing, ...base64s]) };
+    });
   };
 
   const compressImage = (file: File): Promise<Blob> => {
@@ -209,7 +181,19 @@ function InstallationForm() {
     setOcrLoading(field);
 
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
-    setFormData(prev => ({ ...prev, [imgKey]: JSON.stringify(base64s) }));
+    
+    setFormData(prev => {
+       let existing = [];
+       if (prev[imgKey]) {
+          try {
+             existing = JSON.parse(prev[imgKey]);
+             if (!Array.isArray(existing)) existing = [prev[imgKey]];
+          } catch {
+             existing = [prev[imgKey]];
+          }
+       }
+       return { ...prev, [imgKey]: JSON.stringify([...existing, ...base64s]) };
+    });
 
     // Send the first file to OCR
     const firstFile = files[0];
