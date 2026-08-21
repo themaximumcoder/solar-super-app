@@ -207,32 +207,43 @@ function InstallationForm() {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     setOcrLoading(field);
-    
-    // Check if multiple files for L-L or L-N
-    if (files.length > 1) {
-      if (imgKey === 'img_v_pp_after') {
-         const keys = ['img_v_ry_after', 'img_v_rb_after', 'img_v_yb_after'];
-         files.forEach(async (file, index) => {
-           if (index < 3) {
-             const base64 = await compressImageToBase64(file);
-             setFormData(prev => ({ ...prev, [keys[index]]: base64 }));
-           }
-         });
-      } else if (imgKey === 'img_v_pn_after') {
-         const keys = ['img_v_rn_after', 'img_v_bn_after', 'img_v_yn_after'];
-         files.forEach(async (file, index) => {
-           if (index < 3) {
-             const base64 = await compressImageToBase64(file);
-             setFormData(prev => ({ ...prev, [keys[index]]: base64 }));
-           }
-         });
-      }
+
+    const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
+
+    let finalBase64 = base64s[0];
+    if (base64s.length > 1) {
+        // Stitch images vertically
+        const images = await Promise.all(base64s.map(src => {
+            return new Promise<HTMLImageElement>((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.src = src;
+            });
+        }));
+        const maxWidth = Math.max(...images.map(img => img.width));
+        const gap = 20;
+        const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
+        const canvas = document.createElement('canvas');
+        canvas.width = maxWidth;
+        canvas.height = totalHeight;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            let currentY = 0;
+            for (const img of images) {
+                const x = (maxWidth - img.width) / 2;
+                ctx.drawImage(img, x, currentY);
+                currentY += img.height + gap;
+            }
+        }
+        finalBase64 = canvas.toDataURL('image/jpeg', 0.8);
     }
 
-    // Save first file for main preview
+    setFormData(prev => ({ ...prev, [imgKey]: finalBase64 }));
+
+    // Send the first file to OCR
     const firstFile = files[0];
-    const base64 = await compressImageToBase64(firstFile);
-    setFormData(prev => ({ ...prev, [imgKey]: base64 }));
 
     try {
       const compressedBlob = await compressImage(firstFile);
@@ -596,18 +607,10 @@ function InstallationForm() {
   };
 
   const renderVoltageInput = (name: string, label: string, imgKey: string, multiple: boolean = false, mode: string = 'voltage') => {
-    const isMultipleAllowed = multiple && ['v_pp_after', 'v_pn_after'].includes(name);
+    const isMultipleAllowed = true;
     
-    // For previews, if it's L-L or L-N and they uploaded 3 files, show all 3
+    // For previews, if it's L-L or L-N and they uploaded 3 files, show all 3 (legacy behavior removed, just show the stitched image)
     const getPreviews = () => {
-      if (name === 'v_pp_after') {
-        const arr = [formData.img_v_ry_after, formData.img_v_rb_after, formData.img_v_yb_after].filter(Boolean);
-        if (arr.length > 0) return arr;
-      }
-      if (name === 'v_pn_after') {
-        const arr = [formData.img_v_rn_after, formData.img_v_yn_after, formData.img_v_bn_after].filter(Boolean);
-        if (arr.length > 0) return arr;
-      }
       return formData[imgKey] ? [formData[imgKey]] : [];
     };
     
@@ -620,7 +623,7 @@ function InstallationForm() {
           <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
           <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
             {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
-            <input type="file" accept="image/*" capture="environment" multiple={isMultipleAllowed} className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e, mode)} />
+            <input type="file" accept="image/*" capture="environment" multiple className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e, mode)} />
           </label>
         </div>
         {previews.length > 0 && (

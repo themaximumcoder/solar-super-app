@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FileText, Loader2, Upload, Camera } from 'lucide-react';
+import { ArrowLeft, FileText, Loader2, Upload, Camera, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function WorkCompletion() {
   const [formData, setFormData] = useState<Record<string, string>>({
@@ -49,38 +51,92 @@ export default function WorkCompletion() {
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const blob = await compressImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, img_solar_layout: reader.result as string }));
-      };
-      reader.readAsDataURL(blob);
-    }
+  const compressImageToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      compressImage(file).then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    });
   };
 
-  const handleGenerate = async () => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    
+    const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
+    
+    if (base64s.length === 1) {
+      setFormData(prev => ({ ...prev, img_solar_layout: base64s[0] }));
+      return;
+    }
+
+    const images = await Promise.all(base64s.map(src => {
+        return new Promise<HTMLImageElement>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = src;
+        });
+    }));
+
+    const maxWidth = Math.max(...images.map(img => img.width));
+    const gap = 20;
+    const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = maxWidth;
+    canvas.height = totalHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        let currentY = 0;
+        for (const img of images) {
+            const x = (maxWidth - img.width) / 2;
+            ctx.drawImage(img, x, currentY);
+            currentY += img.height + gap;
+        }
+    }
+
+    const stitchedBase64 = canvas.toDataURL('image/jpeg', 0.8);
+    setFormData(prev => ({ ...prev, img_solar_layout: stitchedBase64 }));
+  };
+
+  const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/generate-pptx', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+      const element = document.getElementById('pdf-content');
+      if (!element) throw new Error("PDF Template not found");
+
+      // Temporarily show the element for rendering
+      element.style.display = 'block';
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false
       });
-      if (!response.ok) throw new Error('Generation failed');
-      
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `Work_Completion_${formData.name || 'Report'}.pptx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
+
+      element.style.display = 'none';
+
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Work_Completion_${formData.name || 'Report'}.pdf`);
+
     } catch (error: any) {
-      alert('Failed to generate PPTX: ' + error.message);
+      alert('Failed to generate PDF: ' + error.message);
     } finally {
       setIsGenerating(false);
     }
@@ -148,21 +204,112 @@ export default function WorkCompletion() {
             )}
             <div>
               <p className="font-semibold text-sm mb-1">Solar Layout Photo</p>
-              <label className="btn-primary py-2 px-4 text-sm inline-flex cursor-pointer mt-2">
-                <Camera size={16} className="mr-2" /> Select Image
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              <label className="text-xs text-[hsl(var(--primary))] cursor-pointer font-bold mt-1 inline-block hover:underline">
+                {formData.img_solar_layout ? "Replace Photo(s)" : "Upload Photo(s)"}
+                <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} />
               </label>
+              {formData.img_solar_layout && (
+                <button onClick={() => setFormData(prev => ({...prev, img_solar_layout: ""}))} className="ml-3 text-xs text-red-500 hover:underline">Clear</button>
+              )}
             </div>
           </div>
         </div>
 
         <div className="pt-4">
-          <button onClick={handleGenerate} disabled={isGenerating} className="btn-primary w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 border-none shadow-xl disabled:opacity-50">
-             {isGenerating ? <><Loader2 className="animate-spin mr-2" /> Generating PPTX...</> : <><FileText className="mr-2" /> Export to PPTX</>}
+          <button onClick={handleGeneratePDF} disabled={isGenerating} className="btn-primary w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 border-none shadow-xl disabled:opacity-50">
+             {isGenerating ? <><Loader2 className="animate-spin mr-2" /> Generating PDF...</> : <><Download className="mr-2" /> Export to PDF</>}
           </button>
         </div>
 
       </main>
+
+      {/* Hidden PDF Template */}
+      <div style={{ display: 'none' }}>
+        <div id="pdf-content" className="bg-white text-black p-10 w-[800px] mx-auto box-border font-sans">
+          <h1 className="text-3xl font-bold text-center mb-6 text-blue-800 border-b-4 border-blue-800 pb-2">WORK COMPLETION INSPECTION REPORT</h1>
+          
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8 text-sm">
+            <div><strong className="text-gray-600">Customer Name:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.name || 'N/A'}</span></div>
+            <div><strong className="text-gray-600">Plant Name:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.plant_name || 'N/A'}</span></div>
+            <div className="col-span-2"><strong className="text-gray-600">Address:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.address || 'N/A'}</span></div>
+            <div><strong className="text-gray-600">Date:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.date || 'N/A'}</span></div>
+            <div><strong className="text-gray-600">System Rating (kWp):</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.rating || 'N/A'}</span></div>
+          </div>
+
+          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">1. String & Voltage Details</h2>
+          <table className="w-full text-sm border-collapse mb-8">
+            <tbody>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/4">Total Panel Count</td>
+                <td className="border border-gray-300 p-2 w-1/4">{formData.panel_count}</td>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/4"></td>
+                <td className="border border-gray-300 p-2 w-1/4"></td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 1 Count</td>
+                <td className="border border-gray-300 p-2">{formData.string_1_count}</td>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 1 Voltage</td>
+                <td className="border border-gray-300 p-2">{formData.string_1_v} V</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 2 Count</td>
+                <td className="border border-gray-300 p-2">{formData.string_2_count}</td>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 2 Voltage</td>
+                <td className="border border-gray-300 p-2">{formData.string_2_v} V</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Line-Neutral Before</td>
+                <td className="border border-gray-300 p-2">{formData.line_neutral_before} V</td>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Line-Neutral After</td>
+                <td className="border border-gray-300 p-2">{formData.line_neutral_after} V</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">2. Equipment Serial Numbers</h2>
+          <table className="w-full text-sm border-collapse mb-8">
+            <tbody>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/3">Panel S/N Example</td>
+                <td className="border border-gray-300 p-2">{formData.panel_sn}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Inverter S/N</td>
+                <td className="border border-gray-300 p-2">{formData.inverter_sn}</td>
+              </tr>
+              <tr>
+                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Dongle S/N</td>
+                <td className="border border-gray-300 p-2">{formData.dongle_sn}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          {formData.img_solar_layout && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">3. Solar Layout Photo</h2>
+              <div className="border border-gray-300 p-2 bg-gray-50 flex justify-center">
+                <img src={formData.img_solar_layout} alt="Solar Layout" className="max-w-full max-h-[300px] object-contain" />
+              </div>
+            </div>
+          )}
+
+          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">4. Signatures</h2>
+          <div className="grid grid-cols-2 gap-8 text-sm mt-8">
+            <div className="border border-gray-300 p-4">
+              <p className="font-bold mb-8">Customer Acknowledgment</p>
+              <div className="border-b border-gray-400 mb-2 h-10"></div>
+              <p><strong>Name:</strong> {formData.sign}</p>
+              <p><strong>Date:</strong> {formData.date_sign}</p>
+            </div>
+            <div className="border border-gray-300 p-4">
+              <p className="font-bold mb-8">Contractor / Salesman</p>
+              <div className="border-b border-gray-400 mb-2 h-10"></div>
+              <p><strong>Name:</strong> {formData.salesman_name}</p>
+              <p><strong>Date:</strong> {formData.salesmansign_date}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
