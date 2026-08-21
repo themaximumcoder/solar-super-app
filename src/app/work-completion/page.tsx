@@ -64,14 +64,13 @@ export default function WorkCompletion() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
-    
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
-    
-    if (base64s.length === 1) {
-      setFormData(prev => ({ ...prev, img_solar_layout: base64s[0] }));
-      return;
-    }
+    setFormData(prev => ({ ...prev, img_solar_layout: JSON.stringify(base64s) }));
+  };
 
+  const stitchImages = async (base64s: string[]): Promise<string> => {
+    if (!base64s || base64s.length === 0) return "";
+    if (base64s.length === 1) return base64s[0];
     const images = await Promise.all(base64s.map(src => {
         return new Promise<HTMLImageElement>((resolve) => {
             const img = new Image();
@@ -79,20 +78,16 @@ export default function WorkCompletion() {
             img.src = src;
         });
     }));
-
     const maxWidth = Math.max(...images.map(img => img.width));
     const gap = 20;
     const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
-
     const canvas = document.createElement('canvas');
     canvas.width = maxWidth;
     canvas.height = totalHeight;
     const ctx = canvas.getContext('2d');
-    
     if (ctx) {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
         let currentY = 0;
         for (const img of images) {
             const x = (maxWidth - img.width) / 2;
@@ -100,14 +95,31 @@ export default function WorkCompletion() {
             currentY += img.height + gap;
         }
     }
+    return canvas.toDataURL('image/jpeg', 0.8);
+  };
 
-    const stitchedBase64 = canvas.toDataURL('image/jpeg', 0.8);
-    setFormData(prev => ({ ...prev, img_solar_layout: stitchedBase64 }));
+  const parseImageArray = (val: string | undefined): string[] => {
+    if (!val) return [];
+    try {
+      const arr = JSON.parse(val);
+      return Array.isArray(arr) ? arr : [val];
+    } catch {
+      return [val];
+    }
   };
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
     try {
+      // Stitch image if it's an array right before rendering
+      if (formData.img_solar_layout && formData.img_solar_layout.startsWith('[')) {
+          const arr = JSON.parse(formData.img_solar_layout);
+          const stitched = await stitchImages(arr);
+          setFormData(prev => ({ ...prev, img_solar_layout: stitched }));
+          // Give React a tiny moment to update the DOM with the stitched image before html2canvas runs
+          await new Promise(r => setTimeout(r, 100));
+      }
+
       const element = document.getElementById('pdf-content');
       if (!element) throw new Error("PDF Template not found");
 
@@ -196,7 +208,11 @@ export default function WorkCompletion() {
           <h2 className="text-xl font-semibold mb-4">Layout Image</h2>
           <div className="border-2 border-dashed rounded-xl p-4 flex items-center border-[hsl(var(--border))]">
             {formData.img_solar_layout ? (
-              <img src={formData.img_solar_layout} alt="Solar Layout" className="w-24 h-24 object-cover rounded-lg mr-4 border" />
+              <div className="flex gap-2 mb-4 flex-wrap">
+                {parseImageArray(formData.img_solar_layout).map((src, i) => (
+                  <img key={i} src={src} alt="Solar Layout" className="w-16 h-16 object-cover rounded-md border" />
+                ))}
+              </div>
             ) : (
               <div className="w-24 h-24 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
                 <Upload size={32} />

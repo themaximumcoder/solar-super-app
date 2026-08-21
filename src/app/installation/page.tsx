@@ -209,38 +209,7 @@ function InstallationForm() {
     setOcrLoading(field);
 
     const base64s = await Promise.all(files.map(f => compressImageToBase64(f)));
-
-    let finalBase64 = base64s[0];
-    if (base64s.length > 1) {
-        // Stitch images vertically
-        const images = await Promise.all(base64s.map(src => {
-            return new Promise<HTMLImageElement>((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(img);
-                img.src = src;
-            });
-        }));
-        const maxWidth = Math.max(...images.map(img => img.width));
-        const gap = 20;
-        const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
-        const canvas = document.createElement('canvas');
-        canvas.width = maxWidth;
-        canvas.height = totalHeight;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            let currentY = 0;
-            for (const img of images) {
-                const x = (maxWidth - img.width) / 2;
-                ctx.drawImage(img, x, currentY);
-                currentY += img.height + gap;
-            }
-        }
-        finalBase64 = canvas.toDataURL('image/jpeg', 0.8);
-    }
-
-    setFormData(prev => ({ ...prev, [imgKey]: finalBase64 }));
+    setFormData(prev => ({ ...prev, [imgKey]: JSON.stringify(base64s) }));
 
     // Send the first file to OCR
     const firstFile = files[0];
@@ -467,8 +436,61 @@ function InstallationForm() {
     }
   };
 
+  const stitchImages = async (base64s: string[]): Promise<string> => {
+    if (!base64s || base64s.length === 0) return "";
+    if (base64s.length === 1) return base64s[0];
+    const images = await Promise.all(base64s.map(src => {
+        return new Promise<HTMLImageElement>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = src;
+        });
+    }));
+    const maxWidth = Math.max(...images.map(img => img.width));
+    const gap = 20;
+    const totalHeight = images.reduce((sum, img) => sum + img.height, 0) + (images.length - 1) * gap;
+    const canvas = document.createElement('canvas');
+    canvas.width = maxWidth;
+    canvas.height = totalHeight;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        let currentY = 0;
+        for (const img of images) {
+            const x = (maxWidth - img.width) / 2;
+            ctx.drawImage(img, x, currentY);
+            currentY += img.height + gap;
+        }
+    }
+    return canvas.toDataURL('image/jpeg', 0.8);
+  };
+
+  const parseImageArray = (val: string | undefined): string[] => {
+    if (!val) return [];
+    try {
+      const arr = JSON.parse(val);
+      return Array.isArray(arr) ? arr : [val];
+    } catch {
+      return [val];
+    }
+  };
+
   const uploadAllBase64Images = async (data: any) => {
     const clone = JSON.parse(JSON.stringify(data));
+    
+    // Pre-process any arrays of base64s by stitching them first
+    for (const key of Object.keys(clone)) {
+      if (typeof clone[key] === 'string' && clone[key].startsWith('[')) {
+        try {
+          const arr = JSON.parse(clone[key]);
+          if (Array.isArray(arr) && arr.length > 0 && arr[0].startsWith('data:image/')) {
+            clone[key] = await stitchImages(arr);
+          }
+        } catch(e) {}
+      }
+    }
+
     const itemsToUpload: { obj: any, key: string | number, base64: string, name: string }[] = [];
 
     for (const key of Object.keys(clone)) {
@@ -497,10 +519,11 @@ function InstallationForm() {
         const batch = itemsToUpload.slice(i, i + CONCURRENCY);
         await Promise.all(batch.map(async (item) => {
             try {
+                const base64Data = item.base64.split(',')[1];
                 const res = await fetch('/api/upload-image', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: item.base64, name: item.name })
+                    body: JSON.stringify({ imageBase64: base64Data })
                 });
                 if (res.ok) {
                     const { url } = await res.json();
@@ -609,12 +632,7 @@ function InstallationForm() {
   const renderVoltageInput = (name: string, label: string, imgKey: string, multiple: boolean = false, mode: string = 'voltage') => {
     const isMultipleAllowed = true;
     
-    // For previews, if it's L-L or L-N and they uploaded 3 files, show all 3 (legacy behavior removed, just show the stitched image)
-    const getPreviews = () => {
-      return formData[imgKey] ? [formData[imgKey]] : [];
-    };
-    
-    const previews = getPreviews();
+    const previews = parseImageArray(formData[imgKey]);
 
     return (
       <div key={name} className="relative flex flex-col">
@@ -623,7 +641,7 @@ function InstallationForm() {
           <input name={name} value={formData[name] || ''} onChange={handleInputChange} className="input-field rounded-r-none flex-1" placeholder="Val" />
           <label className="inline-flex items-center justify-center px-3 border border-l-0 border-[hsl(var(--border))] rounded-r-md bg-[hsl(var(--secondary))] hover:bg-[hsl(var(--primary))/0.2] cursor-pointer transition-colors text-[hsl(var(--primary))]">
             {ocrLoading === name ? <Loader2 className="animate-spin h-4 w-4" /> : <Camera className="h-4 w-4" />}
-            <input type="file" accept="image/*" capture="environment" multiple className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e, mode)} />
+            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleOcrScan(name, imgKey, e, mode)} />
           </label>
         </div>
         {previews.length > 0 && (
@@ -821,7 +839,11 @@ function InstallationForm() {
                 <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex flex-col ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
                   <div className="flex items-center">
                     {formData[img.id] ? (
-                      <img src={formData[img.id]} alt={img.label} className="w-16 h-16 object-cover rounded-lg mr-4 border flex-shrink-0" />
+                      <div className="flex gap-1 overflow-x-auto max-w-[100px] mr-4 border rounded-lg bg-white p-1">
+                        {parseImageArray(formData[img.id]).map((src, idx) => (
+                           <img key={idx} src={src} alt={img.label} className="w-10 h-10 object-cover flex-shrink-0" />
+                        ))}
+                      </div>
                     ) : (
                       <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))] flex-shrink-0">
                         <Upload size={24} />
@@ -830,8 +852,8 @@ function InstallationForm() {
                     <div className="flex-1">
                       <p className="font-semibold text-sm mb-1">{img.label}</p>
                       <label className="btn-primary py-1.5 px-3 text-xs inline-flex cursor-pointer">
-                        <Camera size={14} className="mr-1" /> {formData[img.id] ? "Replace" : "Capture"}
-                        <input type="file" multiple accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload(img.id)} />
+                        <Camera size={14} className="mr-1" /> {formData[img.id] ? "Add/Replace" : "Capture"}
+                        <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload(img.id)} />
                       </label>
                       {formData[img.id] && (
                         <button onClick={() => setFormData(prev => ({...prev, [img.id]: ""}))} className="ml-2 text-xs text-red-500 hover:underline">Clear</button>
