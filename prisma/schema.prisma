@@ -33,6 +33,20 @@ model Engineer {
   resetCodeExpiresAt DateTime?
   createdAt          DateTime  @default(now())
   reports            Report[]
+  tickets            ConsultationTicket[]
+}
+
+model ConsultationTicket {
+  id               String    @id @default(cuid())
+  customerName     String
+  contactInfo      String
+  address          String
+  issueDescription String
+  status           String    @default("OPEN") // OPEN, CLAIMED, RESOLVED
+  createdAt        DateTime  @default(now())
+  
+  claimedById      String?
+  claimedBy        Engineer? @relation(fields: [claimedById], references: [id])
 }
 
 model OfflineSite {

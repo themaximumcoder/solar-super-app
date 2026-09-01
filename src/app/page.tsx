@@ -80,6 +80,29 @@ export default function Home() {
             </Link>
           </div>
         </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+          className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-orange-500/30 flex flex-col"
+        >
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity text-orange-500">
+            <ClipboardCheck size={120} />
+          </div>
+          <div className="relative z-10 flex-1 flex flex-col">
+            <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center mb-6 text-white shadow-lg shadow-orange-500/20">
+              <ClipboardCheck size={24} />
+            </div>
+            <h2 className="text-2xl font-bold mb-3">Support Tickets</h2>
+            <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
+              View and claim open consultation requests and site visits booked by the public.
+            </p>
+            <Link href="/tickets" className="btn-primary bg-orange-500 text-white hover:bg-orange-600 shadow-none self-start">
+              View Open Tickets <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
+        </motion.div>
       </div>
 
       {/* Quick Stats Placeholder */}

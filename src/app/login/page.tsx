@@ -67,7 +67,11 @@ export default function Login() {
               <Sun size={32} />
             </div>
             <h1 className="text-2xl font-bold text-center">SolarOS Portal</h1>
-            <p className="text-[hsl(var(--muted-foreground))] text-sm text-center mt-2">Sign in to access the engineering tools</p>
+            <p className="text-[hsl(var(--muted-foreground))] text-sm text-center mt-2">
+              Sign in to access the engineering tools.
+              <br />
+              <span className="text-red-500 font-medium">Strictly for AI Solar Staff only.</span>
+            </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
