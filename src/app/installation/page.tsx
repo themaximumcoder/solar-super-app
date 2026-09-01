@@ -820,30 +820,28 @@ function InstallationForm() {
                 { id: "img_inspection", label: "Equipment Inspection" },
                 { id: "img_skylift", label: "Sky Lift Photos" }
               ].map((img) => (
-                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex flex-col ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
-                  <div className="flex items-center">
+                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
                     {formData[img.id] ? (
-                      <div className="flex gap-1 overflow-x-auto max-w-[100px] mr-4 border rounded-lg bg-white p-1">
+                      <div className="flex gap-2 overflow-x-auto max-w-full mb-3 p-1">
                         {parseImageArray(formData[img.id]).map((src, idx) => (
-                           <img key={idx} src={src} alt={img.label} className="w-10 h-10 object-cover flex-shrink-0" />
+                           <img key={idx} src={src} alt={img.label} className="w-16 h-16 object-cover rounded-lg border shadow-sm flex-shrink-0" />
                         ))}
                       </div>
                     ) : (
-                      <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))] flex-shrink-0">
+                      <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full mb-3 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
                         <Upload size={24} />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm mb-1">{img.label}</p>
-                      <label className="btn-primary py-1.5 px-3 text-xs inline-flex cursor-pointer">
-                        <Camera size={14} className="mr-1" /> {formData[img.id] ? "Add/Replace" : "Capture"}
+                    <div>
+                      <p className="font-semibold text-sm mb-2">{img.label}</p>
+                      <label className="btn-primary py-1.5 px-3 text-xs inline-flex items-center justify-center cursor-pointer">
+                        <Camera size={14} className="mr-1" /> {formData[img.id] ? "Add More" : "Capture"}
                         <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload(img.id)} />
                       </label>
                       {formData[img.id] && (
-                        <button onClick={() => setFormData(prev => ({...prev, [img.id]: ""}))} className="ml-2 text-xs text-red-500 hover:underline">Clear</button>
+                        <button onClick={() => setFormData(prev => ({...prev, [img.id]: ""}))} className="ml-2 text-xs text-red-500 hover:underline block mt-2 mx-auto">Clear</button>
                       )}
                     </div>
-                  </div>
                 </div>
               ))}
             </div>
@@ -926,20 +924,27 @@ function InstallationForm() {
                 { id: "img_interconnection", label: "8. Interconnection Point at DB" },
                 { id: "img_housekeeping", label: "9. Housekeeping" }
               ].map((img) => (
-                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex items-center ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
+                <div key={img.id} className={`border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center ${formData[img.id] ? 'border-green-500 bg-green-500/5' : 'border-[hsl(var(--border))]'}`}>
                   {formData[img.id] ? (
-                    <img src={formData[img.id]} alt={img.label} className="w-16 h-16 object-cover rounded-lg mr-4 border" />
+                    <div className="flex gap-2 overflow-x-auto max-w-full mb-3 p-1">
+                        {parseImageArray(formData[img.id]).map((src, idx) => (
+                           <img key={idx} src={src} alt={img.label} className="w-16 h-16 object-cover rounded-lg border shadow-sm flex-shrink-0" />
+                        ))}
+                    </div>
                   ) : (
-                    <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-lg mr-4 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
+                    <div className="w-16 h-16 bg-[hsl(var(--secondary))] rounded-full mb-3 flex items-center justify-center text-[hsl(var(--muted-foreground))]">
                       <Camera size={24} />
                     </div>
                   )}
-                  <div className="flex-1">
-                    <span className="text-sm font-medium block">{img.label}</span>
-                    <label className="text-xs text-[hsl(var(--primary))] cursor-pointer font-bold mt-1 inline-block hover:underline">
-                      {formData[img.id] ? "Change Photo" : "Upload Photo"}
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload(img.id)} />
+                  <div>
+                    <span className="text-sm font-medium block mb-2">{img.label}</span>
+                    <label className="btn-primary py-1.5 px-3 text-xs inline-flex items-center justify-center cursor-pointer">
+                      <Camera size={14} className="mr-1" /> {formData[img.id] ? "Add More" : "Upload Photo"}
+                      <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload(img.id)} />
                     </label>
+                    {formData[img.id] && (
+                        <button onClick={() => setFormData(prev => ({...prev, [img.id]: ""}))} className="ml-2 text-xs text-red-500 hover:underline block mt-2 mx-auto">Clear</button>
+                    )}
                   </div>
                 </div>
               ))}
