@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { cookies } from "next/headers";
-import * as jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "solar-super-secret-key-123";
 
 // POST: Public submission of a new consultation ticket
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    const { customerName, contactInfo, address, issueDescription } = data;
+    const { customerName, contactInfo, address, issueDescription, ticketType, scheduledDate, scheduledTime } = data;
 
     if (!customerName || !contactInfo || !address || !issueDescription) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
@@ -22,6 +20,9 @@ export async function POST(req: Request) {
         contactInfo,
         address,
         issueDescription,
+        ticketType: ticketType || "CONSULTATION",
+        scheduledDate,
+        scheduledTime,
         status: "OPEN"
       }
     });
@@ -40,14 +41,13 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("solar_auth_token");
+    const token = cookieStore.get("auth_session");
 
-    if (!token) {
+    if (!token || !token.value || token.value === 'true') {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token.value, JWT_SECRET) as any;
-    const engineerId = decoded.id;
+    const engineerId = token.value;
 
     // Get OPEN tickets and tickets CLAIMED by this engineer
     const openTickets = await prisma.consultationTicket.findMany({

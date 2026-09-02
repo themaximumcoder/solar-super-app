@@ -43,6 +43,9 @@ model ConsultationTicket {
   address          String
   issueDescription String
   status           String    @default("OPEN") // OPEN, CLAIMED, RESOLVED
+  ticketType       String    @default("CONSULTATION") // CONSULTATION, MAINTENANCE
+  scheduledDate    String?
+  scheduledTime    String?
   createdAt        DateTime  @default(now())
   
   claimedById      String?

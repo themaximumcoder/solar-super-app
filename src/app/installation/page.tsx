@@ -645,7 +645,7 @@ function InstallationForm() {
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-8 flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Installation Report</h1>
+          <h1 className="text-3xl font-bold mb-2">Maxis Site Pack V2, Acceptance Report & Maxis HSE Site Pack_V3-092026</h1>
           <p className="text-[hsl(var(--muted-foreground))]">Capture site data, OCR multimeter readings, and inject images.</p>
         </div>
         {engineer && (

@@ -7,9 +7,11 @@ import Link from "next/link";
 
 export default function Home() {
   const [reportCount, setReportCount] = useState<number | string>("...");
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     fetch('/api/stats').then(res => res.json()).then(data => setReportCount(data.count)).catch(() => setReportCount(0));
+    fetch('/api/auth/me').then(res => res.json()).then(data => setIsAuthenticated(data.authenticated)).catch(() => setIsAuthenticated(false));
   }, []);
   return (
     <div className="max-w-6xl mx-auto space-y-8">
@@ -33,59 +35,61 @@ export default function Home() {
 
       {/* Action Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-[hsl(var(--primary))/0.3] flex flex-col"
-        >
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <ClipboardCheck size={120} />
-          </div>
-          <div className="relative z-10 flex-1 flex flex-col">
-            <div className="w-12 h-12 rounded-xl bg-[hsl(var(--primary))] flex items-center justify-center mb-6 text-[hsl(var(--primary-foreground))] shadow-lg shadow-[hsl(var(--primary))/0.2]">
-              <ClipboardCheck size={24} />
-            </div>
-            <h2 className="text-2xl font-bold mb-3">Install Report</h2>
-            <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
-              Complete the compliance checklist, log voltage measurements, upload site photos, and automatically generate the Site Acceptance Word Doc.
-            </p>
-            <Link href="/installation" className="btn-primary bg-white text-black hover:bg-white/90 shadow-none self-start">
-              Start Installation Check <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </div>
-        </motion.div>
+        {isAuthenticated && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+              className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-[hsl(var(--primary))/0.3] flex flex-col"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                <ClipboardCheck size={120} />
+              </div>
+              <div className="relative z-10 flex-1 flex flex-col">
+                <div className="w-12 h-12 rounded-xl bg-[hsl(var(--primary))] flex items-center justify-center mb-6 text-[hsl(var(--primary-foreground))] shadow-lg shadow-[hsl(var(--primary))/0.2]">
+                  <ClipboardCheck size={24} />
+                </div>
+                <h2 className="text-2xl font-bold mb-3">Maxis Site Pack V2, Acceptance Report & Maxis HSE Site Pack_V3-092026</h2>
+                <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
+                  Complete the compliance checklist, log voltage measurements, upload site photos, and automatically generate the Site Acceptance Word Doc.
+                </p>
+                <Link href="/installation" className="btn-primary bg-white text-black hover:bg-white/90 shadow-none self-start">
+                  Start Installation Check <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+            </motion.div>
 
-
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5 }}
+              className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-blue-500/30 flex flex-col md:col-span-2 lg:col-span-1"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity text-blue-500">
+                <FileText size={120} />
+              </div>
+              <div className="relative z-10 flex-1 flex flex-col">
+                <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center mb-6 text-white shadow-lg shadow-blue-500/20">
+                  <FileText size={24} />
+                </div>
+                <h2 className="text-2xl font-bold mb-3">Work Completion Form</h2>
+                <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
+                  Fill out the inspection details, string voltages, and upload the layout photo to generate the Work Completion Inspection PPTX.
+                </p>
+                <Link href="/work-completion" className="btn-primary bg-blue-600 text-white hover:bg-blue-700 shadow-none self-start">
+                  Open Work Completion <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
 
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.5 }}
-          className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-blue-500/30 flex flex-col md:col-span-2 lg:col-span-1"
-        >
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity text-blue-500">
-            <FileText size={120} />
-          </div>
-          <div className="relative z-10 flex-1 flex flex-col">
-            <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center mb-6 text-white shadow-lg shadow-blue-500/20">
-              <FileText size={24} />
-            </div>
-            <h2 className="text-2xl font-bold mb-3">Work Completion Form</h2>
-            <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
-              Fill out the inspection details, string voltages, and upload the layout photo to generate the Work Completion Inspection PPTX.
-            </p>
-            <Link href="/work-completion" className="btn-primary bg-blue-600 text-white hover:bg-blue-700 shadow-none self-start">
-              Open Work Completion <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          className="glass-panel p-8 rounded-2xl relative overflow-hidden group border-orange-500/30 flex flex-col"
+          className={`glass-panel p-8 rounded-2xl relative overflow-hidden group border-orange-500/30 flex flex-col ${!isAuthenticated ? 'md:col-span-2 lg:col-span-3' : ''}`}
         >
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity text-orange-500">
             <ClipboardCheck size={120} />
