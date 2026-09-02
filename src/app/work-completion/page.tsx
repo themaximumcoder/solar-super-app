@@ -171,7 +171,7 @@ export default function WorkCompletion() {
         <Link href="/dashboard" className="mr-4 hover:bg-[hsl(var(--primary))/0.1] p-2 rounded-full transition-colors">
           <ArrowLeft size={24} />
         </Link>
-        <h1 className="text-xl font-bold">Work Completion Inspection</h1>
+        <h1 className="text-xl font-bold">AI Solar Work Completion Form</h1>
       </div>
       
       <main className="flex-1 p-4 max-w-4xl mx-auto w-full mt-6 space-y-6">
@@ -252,83 +252,83 @@ export default function WorkCompletion() {
 
       {/* Hidden PDF Template */}
       <div style={{ display: 'none' }}>
-        <div id="pdf-content" className="bg-white text-black p-10 w-[800px] mx-auto box-border font-sans">
-          <h1 className="text-3xl font-bold text-center mb-6 text-blue-800 border-b-4 border-blue-800 pb-2">WORK COMPLETION INSPECTION REPORT</h1>
+        <div id="pdf-content" className="bg-[#ffffff] text-[#000000] p-10 w-[800px] mx-auto box-border font-sans">
+          <h1 className="text-3xl font-bold text-center mb-6 text-[#1e40af] border-b-4 border-[#1e40af] pb-2">AI SOLAR WORK COMPLETION FORM</h1>
           
           <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8 text-sm">
-            <div><strong className="text-gray-600">Customer Name:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.name || 'N/A'}</span></div>
-            <div><strong className="text-gray-600">Plant Name:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.plant_name || 'N/A'}</span></div>
-            <div className="col-span-2"><strong className="text-gray-600">Address:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.address || 'N/A'}</span></div>
-            <div><strong className="text-gray-600">Date:</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.date || 'N/A'}</span></div>
-            <div><strong className="text-gray-600">System Rating (kWp):</strong> <span className="border-b border-gray-300 pb-1 block mt-1">{formData.rating || 'N/A'}</span></div>
+            <div><strong className="text-[#4b5563]">Customer Name:</strong> <span className="border-b border-[#d1d5db] pb-1 block mt-1">{formData.name || 'N/A'}</span></div>
+            <div><strong className="text-[#4b5563]">Plant Name:</strong> <span className="border-b border-[#d1d5db] pb-1 block mt-1">{formData.plant_name || 'N/A'}</span></div>
+            <div className="col-span-2"><strong className="text-[#4b5563]">Address:</strong> <span className="border-b border-[#d1d5db] pb-1 block mt-1">{formData.address || 'N/A'}</span></div>
+            <div><strong className="text-[#4b5563]">Date:</strong> <span className="border-b border-[#d1d5db] pb-1 block mt-1">{formData.date || 'N/A'}</span></div>
+            <div><strong className="text-[#4b5563]">System Rating (kWp):</strong> <span className="border-b border-[#d1d5db] pb-1 block mt-1">{formData.rating || 'N/A'}</span></div>
           </div>
 
-          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">1. String & Voltage Details</h2>
+          <h2 className="text-xl font-bold text-[#1e40af] bg-[#eff6ff] p-2 mb-4">1. String & Voltage Details</h2>
           <table className="w-full text-sm border-collapse mb-8">
             <tbody>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/4">Total Panel Count</td>
-                <td className="border border-gray-300 p-2 w-1/4">{formData.panel_count}</td>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/4"></td>
-                <td className="border border-gray-300 p-2 w-1/4"></td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50 w-1/4">Total Panel Count</td>
+                <td className="border border-[#d1d5db] p-2 w-1/4">{formData.panel_count}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50 w-1/4"></td>
+                <td className="border border-[#d1d5db] p-2 w-1/4"></td>
               </tr>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 1 Count</td>
-                <td className="border border-gray-300 p-2">{formData.string_1_count}</td>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 1 Voltage</td>
-                <td className="border border-gray-300 p-2">{formData.string_1_v} V</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">String 1 Count</td>
+                <td className="border border-[#d1d5db] p-2">{formData.string_1_count}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">String 1 Voltage</td>
+                <td className="border border-[#d1d5db] p-2">{formData.string_1_v} V</td>
               </tr>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 2 Count</td>
-                <td className="border border-gray-300 p-2">{formData.string_2_count}</td>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">String 2 Voltage</td>
-                <td className="border border-gray-300 p-2">{formData.string_2_v} V</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">String 2 Count</td>
+                <td className="border border-[#d1d5db] p-2">{formData.string_2_count}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">String 2 Voltage</td>
+                <td className="border border-[#d1d5db] p-2">{formData.string_2_v} V</td>
               </tr>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Line-Neutral Before</td>
-                <td className="border border-gray-300 p-2">{formData.line_neutral_before} V</td>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Line-Neutral After</td>
-                <td className="border border-gray-300 p-2">{formData.line_neutral_after} V</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">Line-Neutral Before</td>
+                <td className="border border-[#d1d5db] p-2">{formData.line_neutral_before} V</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">Line-Neutral After</td>
+                <td className="border border-[#d1d5db] p-2">{formData.line_neutral_after} V</td>
               </tr>
             </tbody>
           </table>
 
-          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">2. Equipment Serial Numbers</h2>
+          <h2 className="text-xl font-bold text-[#1e40af] bg-[#eff6ff] p-2 mb-4">2. Equipment Serial Numbers</h2>
           <table className="w-full text-sm border-collapse mb-8">
             <tbody>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50 w-1/3">Panel S/N Example</td>
-                <td className="border border-gray-300 p-2">{formData.panel_sn}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50 w-1/3">Panel S/N Example</td>
+                <td className="border border-[#d1d5db] p-2">{formData.panel_sn}</td>
               </tr>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Inverter S/N</td>
-                <td className="border border-gray-300 p-2">{formData.inverter_sn}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">Inverter S/N</td>
+                <td className="border border-[#d1d5db] p-2">{formData.inverter_sn}</td>
               </tr>
               <tr>
-                <td className="border border-gray-300 p-2 font-bold bg-gray-50">Dongle S/N</td>
-                <td className="border border-gray-300 p-2">{formData.dongle_sn}</td>
+                <td className="border border-[#d1d5db] p-2 font-bold bg-gray-50">Dongle S/N</td>
+                <td className="border border-[#d1d5db] p-2">{formData.dongle_sn}</td>
               </tr>
             </tbody>
           </table>
 
           {formData.img_solar_layout && (
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">3. Solar Layout Photo</h2>
-              <div className="border border-gray-300 p-2 bg-gray-50 flex justify-center">
+              <h2 className="text-xl font-bold text-[#1e40af] bg-[#eff6ff] p-2 mb-4">3. Solar Layout Photo</h2>
+              <div className="border border-[#d1d5db] p-2 bg-gray-50 flex justify-center">
                 <img src={formData.img_solar_layout} alt="Solar Layout" className="max-w-full max-h-[300px] object-contain" />
               </div>
             </div>
           )}
 
-          <h2 className="text-xl font-bold text-blue-800 bg-blue-50 p-2 mb-4">4. Signatures</h2>
+          <h2 className="text-xl font-bold text-[#1e40af] bg-[#eff6ff] p-2 mb-4">4. Signatures</h2>
           <div className="grid grid-cols-2 gap-8 text-sm mt-8">
-            <div className="border border-gray-300 p-4">
+            <div className="border border-[#d1d5db] p-4">
               <p className="font-bold mb-8">Customer Acknowledgment</p>
               <div className="border-b border-gray-400 mb-2 h-10"></div>
               <p><strong>Name:</strong> {formData.sign}</p>
               <p><strong>Date:</strong> {formData.date_sign}</p>
             </div>
-            <div className="border border-gray-300 p-4">
+            <div className="border border-[#d1d5db] p-4">
               <p className="font-bold mb-8">Contractor / Salesman</p>
               <div className="border-b border-gray-400 mb-2 h-10"></div>
               <p><strong>Name:</strong> {formData.salesman_name}</p>

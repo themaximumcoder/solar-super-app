@@ -1,0 +1,1129 @@
+SITE ACCEPTANCE REPORT
+SITE INFORMATION
+ 
+Project No
+ 
+ 
+System Size Installed
+ 
+ 
+Installation
+ 
+Start Date
+ 
+ 
+Installation End Date
+ 
+ 
+System Installer
+ 
+ 
+PIC Onsite
+ 
+ 
+ 
+Premise Adress
+ 
+ 
+Note:
+ 
+Please ensure that the information filled out is correct.
+ 
+ 
+ 
+2.0 SYSTEM COMPONENTS INSTALLED  
+ 
+Item 
+Description 
+Quantity/Length 
+PV Solar Panels 
+[Brand, Model & Serial Num]
+ – 
+for each Solar Panels
+Inverter 
+[Brand & Model & Serial Num]
+ 
+Wifi
+ Dongle 
+(for 3 phase string inverter)
+ 
+[Brand & Model & Serial Num]
+ 
+Mounting Structure 
+[Brand & Model]
+ 
+DC Cabling 
+[Brand & Model]
+ 
+AC Cabling 
+[Brand & Model]
+ 
+Earth Cabling
+[Brand & Model]
+ 
+Junction Box 
+(for Micro Inverter System)
+ 
+[Brand & Model]
+ 
+Solar combiner box 
+[Brand & Model]
+ 
+AC breakers 
+[Brand & Model]
+ 
+AC SPD  
+[Brand & Model]
+ 
+RCCB 
+(for Micro Inverter System)
+ 
+[Brand & Model]
+ 
+Energy Meter
+ 
+[Brand & Model]
+ 
+Smart Meter
+[Brand & Model]
+ 
+ 
+ 3
+.0 DRAWINGS
+ (SLD and PV drawings shall be stamped by SEDA certified personnel)
+ 
+Single Line Diagram
+PV Layout submission to SEDA  
+4.0 INSTALLATION PHOTOGRAPHS
+ 
+ 
+Notes:
+ 
+*Photos to be captured 
+with GPS (latitude / longitude) information, time and dat
+e shown 
+*Please attach maximum 3 photographs per page, please ensure that photographs are of great viewing quality.
+ 
+* All photos must be labelled
+ accordingly 
+Installation Mount Photos 
+ 
+1.Mounting Hooks and brackets (Hook bracket/L-feet)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+2.Photo of entire mounting layout 
+ 
+ 
+ 
+Solar Panel Array Layout 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+AC and DC Cable Route 
+ 
+Cable from PV array to Drop point (Cables on roof level)  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Vertical Cable route (from drop point to inverter/combiner box) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Junction Box – 
+(for microinverter only)
+Combiner box to Premise DB 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Inverter/Combiner box 
+ 
+Zoom out view of Inverter with Combiner Box 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Close up view of Inverter 
+(
+applicable for String Inverter only
+)
+ 
+ 
+ 
+ 
+ 
+AC output cables from String Inverter (Showing cable ferrule installed) 
+ Microinverters- 
+(for 
+microinverter 
+system 
+only
+)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Combiner Box  
+ 
+With cover on – (
+clear view of the labels of each component
+)
+ 
+ 
+Without cover – clear view of components 
+ratings, terminations
+, 
+color
+ coded AC wires.   
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Interconnection Point at the Customer’s Distribution Board (DB) 
+ 
+Wide-angle view – 
+clear view of the whole 
+customer`s 
+DB box.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Zoomed picture of the breaker with Solar termination point)- 
+Solar cable labelled   
+Distinctive 
+labe
+).
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Smart Meter 
+(only for site with Smart meter)
+ 
+Power and communication lines checklist
+Connection Type
+Wire
+Smart Meter Terminals
+Source
+CAT6
+Tick
+Remark
+Voltage Inputs 
+ 
+ 
+ 
+ 
+Ua
+(
+Red)
+3
+Load - R phase
+ 
+ 
+Ub(
+Yellow)
+6
+Load - Y phase
+ 
+ 
+Uc(
+Blue)
+9
+Load - Blue phase
+ 
+ 
+Un(
+Neutral)
+10
+Load - Neutral
+ 
+ 
+Current Transformer 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+IA*
+13
+CT Y
+White-Orange
+ 
+ 
+IA
+14
+CT Y
+Orange
+ 
+ 
+IB*
+16
+CT  B
+White-Green
+ 
+ 
+IB
+17
+CT B
+Green
+ 
+ 
+IC*
+19
+CT R
+White-Blue
+ 
+ 
+IC
+21
+CT R
+Blue
+ 
+ 
+Communication 
+ 
+ 
+ 
+ 
+RS485A
+24
+Smart Meter
+ 
+ 
+RS485B
+25
+Smart Meter
+ 
+ 
+ 
+CT clamps pic showing direction of current flow arrow
+CT clamp connection to CAT 6 cable
+ 
+Connection Smart Meter terminals (input and output)
+Housekeeping at customer premise after installation completed. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+TESTING & COMISSIONING RESULTS
+ 
+* Each test shall be supported with photos of testing gears (PV tester, 
+Multimeter
+, Earth resistance tester) clearly showing the results and tally with the tabulated value. 
+* Each 
+photos
+ must be labelled accordingly.
+5.1 Cable Insulation Test 
+Cable Insulation Test
+Test Point
+All cables
+Use appropriate tools to measure and record
+Testing is conducted on new cable installations to determine if the insulation has been damaged.
+Notes:
+Mandatory for all test on-site photographs to be attached and labelled accordingly.
+Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB
+Isolate all cables except for inter-module connection and earthing cables.
+No.
+Cable from
+(Originating)
+Cable to
+(Terminating)
+Insulation Resistance 
+Value (M Ohms)
+Pass
+Fail
+(Please tick the relevant box)
+For String Inverter System
+1
+PV String 1 (+)
+MPPT Inverter
+2
+PV String 1 (-)
+MPPT Inverter
+3
+PV String 2 (+)
+MPPT Inverter
+4
+PV String 2 (-)
+MPPT Inverter
+5
+Inverter
+AC MCB
+6
+AC MCB
+PV Meter
+7
+AC MCB
+AC SPD
+8
+PV Meter
+Load Main Breaker
+For Micro Inverter System
+1
+PV Panels 
+Microinverter 1
+2
+PV Panels 
+Microinverter 2
+3
+PV Panels 
+Microinverter 3
+4
+PV Panels 
+Microinverter 4
+5
+PV Panels 
+Microinverter 5
+6
+PV Panels 
+Microinverter 6
+7
+PV Panels 
+Microinverter 7
+8
+Junction Box
+AC MCB
+9
+AC MCB
+ELCB/RCCB
+10
+ELCB/RCCB
+PV Meter
+11
+AC MCB
+AC SPD
+12k
+PV Meter
+Load Main Breaker
+Photographs:
+SAMPLE
+SAMPLE
+SAMPLE
+SAMPLE
+Test 2.1.2
+Test 2.1.2
+Test 2.1.1
+Test 2.1.1
+String Open Circuit Voltage 
+Test
+( Only
+ for String 
+Inverter )
+String Open Circuit Voltage Test
+Test Point
+Solar Combiner Box
+Use appropriate tools to measure and record
+Test the continuity of each string 
+OK:
+ Not OK:
+Determine the following:
+1. Measured Open Circuit Voltage (
+Voc_mea
+) of each
+string.
+2. Expected Open Circuit Voltage (
+Voc_exp
+) of each string.
+3. % Difference between measured and expected Voc.
+ACCEPT if
+ % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5%
+Voc measured of each string is less than the maximum input voltage of the inverter
+Polarity of all DC cables (string and array) is correct
+Notes:
+Mandatory for all test on-site photographs to be attached and labelled accordingly.
+Solar irradiance should be at least 350
+Wm-2 when performing this test.
+Instructions:
+SWITCH OFF / DISCONNECT the
+following:
+- PV AC MCB
+String No.
+Voc of string at STC (V)
+Voc measured (V) 
+Voc expected (V) 
+Measured module temp (
+o
+C
+) 
+Measured Irradiance (Wm-2) 
+% difference of Voc 
+Accept (A) 
+or 
+Reject (R) 
+1
+2
+3
+4
+5
+Photographs:
+DC Short Circuit Current Test 
+( Only
+ for String 
+Inverter )
+DC Short Circuit Current Test
+Test Point
+Solar Combiner Box
+Use appropriate tools to measure and record
+Using appropriate method, determine the following: 
+1. Measured short circuit current (
+Isc_mea
+) of each string 
+2. Expected short circuit current (
+Isc_exp
+) of each string 
+3. % Difference between measured and expected 
+Isc
+. 
+ACCEPT if 
+% difference of 
+Isc
+ (between measured 
+Isc_mea
+ and expected 
+Isc_exp
+) with respect to 
+Isc_exp
+ is within +/- 5%
+ 
+Notes:
+Mandatory for all test on-site photographs to be attached and labelled accordingly.
+Solar irradiance should be at least 350 Wm
+-2
+ when performing this test.
+Instructions:
+SWITCH OFF / DISCONNECT the following:
+PV AC MCB
+No.
+String No.
+Solar 
+irradianc
+(Wm
+-2)
+Measured module temp (
+o
+C
+)
+Measured 
+Isc
+ of string
+(A)
+Expected 
+Isc
+ of String (A)
+% difference of 
+Isc
+Accept (A) or Reject (R)
+Photographs:
+Isolation Device Functional Test
+Isolation Device Functional Test
+Test Point
+All breakers and switches
+Use appropriate tools to measure and record
+Please tick in the appropriate box 
+Notes:
+Mandatory for all test on-site photographs to be attached and labelled accordingly
+Solar irradiance should be at least 350 Wm
+-2
+ when performing this test.
+Instructions:
+SWITCH OFF / DISCONNECT the following:
+PV AC MCB
+No.
+Description
+Accept
+Reject
+Note
+1
+Confirm voltage is NOT present at the outgoing terminal of PV AC MCB when the switch is in OFF position 
+2
+Confirm voltage is present at the outgoing terminal of PV AC MCB when the switch is in ON position 
+Photographs:
+Inverter Functional Test and Incoming power supply measurement.
+Inverter Functional Test
+Test Point
+Inverter
+Use appropriate tools to measure and record
+Notes:
+Mandatory for all test on-site photographs to be attached and labelled accordingly
+Please tick in the appropriate box
+Solar irradiance should be at least 350 Wm-2 when performing this test.
+Instructions: SWITCH ON the system and ensure that the inverter is operating.
+CAUTION: Before switching on the inverter, make sure Voc measured at the 
+inverter input
+ terminal must be LESS THAN the maximum allowable input DC voltage of the inverter 
+No.
+Description
+Value
+Accept
+Reject
+Reasons
+1
+Check whether the measured DC voltage falls within the allowable MPPT voltage range of the inverter. 
+(Only for String 
+Inverter )
+2
+Check whether the measured 
+Grid Phase Voltage
+ 
+are
+ within the acceptable limit.
+(Single Phase - 243V max / 216V min)
+(Three Phase – 440V max / 376V min)
+L1 to N
+L2 to N
+L3 to N
+3
+Check whether the measured
+ Grid Line Voltage 
+are
+ within the acceptable limit.
+(Single Phase - 243V max / 216V min)
+(Three Phase – 440V max / 376V min)
+L1 to l2
+L2 to L3
+L1 to L3
+4
+Check whether the voltage of 
+Phase to Earth
+ 
+are
+ within the acceptable limit.
+(Single Phase - 
+216V to 253V)
+(Three Phase – 216V to 253V per phase)
+L1 to E
+L2 to E
+L3 to E
+5
+Check whether the voltage of 
+Neutral to Earth
+ 
+are
+ within the acceptable limit.
+Condition
+Acceptable NEV
+Normal Operation
+< 3V
+Best Practice range
+0.5V to 2V
+Warning Threshold
+> 3V - investigate
+Critical concern
+> 5V – unsafe, must be rectified
+Photographs for each test 
+( 1
+ to 5)
+HSE MAXIS SITE PACK
+GENERAL INFO
+Applicant Name (System Installer):
+Site PIC Name (at site):
+IC/Passport No.:
+Mobile No.:
+Company Name (Main 
+Vendor/Contractor
+):
+Sub-
+Contractor/Vendor 
+name: 
+(if applicable)
+ 
+Project: GCPV system installation
+Work description:
+LRD/Address: (ensure same with PART A site info)
+Work Area/Room:
+ 
+Rooftop :
+Front 
+porch :
+DB 
+room :
+ 
+Permit duration: Start date                                     End date:
+Request by (Maxis):
+Mobile No:
+Emergency Contact Number:
+No
+Description
+Phone No.
+Remark
+1
+Local Hospital
+2
+Nearest Clinic
+3
+Nearest BOMBA
+4
+Nearest Polis station
+5
+HSE/Safety Officer/Site Safety Supervisor
+6
+Main Office No.
+Worker name list.
+No
+Name
+Toolbox 
+day 1
+Toolbox
+day 2 (if installation extended 
+beyin
+ 1 
+day)(
+1
+2
+3
+4
+5
+Note:
+1. Attached another name list if required
+2. Valid CIDB, WAH, NTMSP or 
+other
+ relevant card/cert refer to next page
+3. All 
+incident
+ (Accident & Near miss) to be 
+report
+ immediately at Maxis
+Workers card photo: (CIDB, WAH, NTMSP)
+No
+Name
+CIDB
+WAH
+NTMSP
+Valid Work Permit (foreign workers)
+Signature
+1.
+Ref:
+Expiry
+ date:
+Photo
+Ref:
+Expiry date
+Photo
+Ref:
+Expiry date
+Photo
+2.
+Ref:
+Expiry
+ date:
+Photo
+Ref:
+Expiry date
+Photo
+Ref:
+Expiry date
+Photo
+3.
+Ref:
+Expiry
+ date:
+Photo
+Ref:
+Expiry date
+Photo
+Ref:
+Expiry date
+Photo
+4.
+Ref:
+Expiry
+ date:
+Photo
+Ref:
+Expiry date
+Photo
+Ref:
+Expiry date
+Photo
+5.
+Ref:
+Expiry
+ date:
+Photo
+Ref:
+Expiry date
+Photo
+Ref:
+Expiry date
+Photo
+Maxis HSE Site Pack Photographs
+Site Toolbox Meeting & Safety Briefing
+PPE Compliance Photo
+Equipment Inspection
+Sky lift Photos
+Note: 
+1. Reflective vests to be used at ground level 
+works
+, night work. Reflective vest cannot be used during climbing/working at height
+2. Key collection will use NCR
+3. Physical Safety site pack required, If online document not available on site 
+at all times
+.
+Lifting Operation and Lifting Equipment
+(For manual operation or using Crane)
+Person in charge name:
+Mobile No.:
+Lifting method:
+(refer to lifting procedure)
+Lifting material description:
+(Install or remove)
+Estimated weight:
+Height:
+No
+Description (Lifting equipment)
+Yes
+No
+Remark
+Pulley
+Sling
+Connector/Shackle
+Hook
+Safety ledge available/function
+Rope/Cable
+Hoist assistance (Descender/
+etc
+)
+N/A – not applicable
+Crane/
+Skylift
+ Inspection
+Height:
+No
+Description
+Yes
+No
+Remark
+PMA No & validity
+PMA No:
+Reg No:
+Expiry date:
+Out rigger
+Out rigger plate/ground stability
+Hydraulic system
+Work area protection
+Cone, signage, light, blinker
+Operator PPE’s
+Skylift
+ bucket
+For 
+skylift
+1. Detail inspection to be conducted by Crane/
+Skylift
+ operator
+2. Workers that require to exit the 
+skylift
+ bucket to another level and 
+expose
+ to fall more than 2 
+meter
+ require to have valid working at height competency from approved training vendor)
+Electrical
+No
+Description
+Yes
+No
+Remark
+1.
+ELCB/Circuit breaker
+2.
+Competence person
+Wireman/Chargeman
+3.
+PPE
+Electrical glove
+4.
+LOTO
+Hotwork
+No
+Description
+Yes
+No
+Remark
+1.
+Fire blanket (if applicable)
+2.
+Observer (fire watcher)
+Note: Portable fire 
+extinguisher is
+ mandatory at site
+Inspection
+No
+Description
+Yes
+No
+Remark
+1.
+Portable fire extinguisher
+2.
+First Aid box
+3.
+Safety Signage
+4.
+Barricade tape (if applicable)
+5.
+Safety Cone/Safety Signboard
+6.
+Ear Protection
+7.
+Eye protection
+8.
+Hand protection
+9.
+Other machinery
+10.
+Toolbox
+PIC/Trainer name:
+Toolbox content
+Toolbox content
+Electrical Safety
+Lifting operation
+Working at Height
+Housekeeping
+Manual handling
+Fire Safety
+Hazard
+PPE usage
+Emergency Response
+Hand tools
+Power tools
+Chemical
+Note: Signed 
+at
+ Workers Name list after toolbox briefing
+Job Hazard Analysis (JHA)
+(HIRARC 
+refer
+ to Safety Manual)
+Required PPE
+Sequence of Basic Job Steps
+Potential Hazards
+Recommended Action or Procedure
+Acceptance and Verification
+Prepared by
+Verified and 
+A
+ccepted
+ by
+Signature 
+:
+Signature
+:
+Name
+:
+Name
+:
+Position
+:
+Position
+:
+Company
+:
+Company
+:
+Date
+:
+Date
+:

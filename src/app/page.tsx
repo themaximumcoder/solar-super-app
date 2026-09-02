@@ -73,7 +73,7 @@ export default function Home() {
                 <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center mb-6 text-white shadow-lg shadow-blue-500/20">
                   <FileText size={24} />
                 </div>
-                <h2 className="text-2xl font-bold mb-3">Work Completion Form</h2>
+                <h2 className="text-2xl font-bold mb-3">AI Solar Work Completion Form</h2>
                 <p className="text-[hsl(var(--muted-foreground))] mb-8 flex-1">
                   Fill out the inspection details, string voltages, and upload the layout photo to generate the Work Completion Inspection PPTX.
                 </p>

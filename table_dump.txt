@@ -1,0 +1,298 @@
+
+--- TABLE 0 ---
+R0: Project No |  | System Size Installed | 
+R1: Installation  Start Date |  | Installation End Date | 
+R2: System Installer |  |  | 
+R3: PIC Onsite |  |  | 
+R4: Premise Adress |  |  | 
+
+--- TABLE 1 ---
+R0: Item | Description | Quantity/Length
+R1: PV Solar Panels | [Brand, Model & Serial Num] – for each Solar Panels | 
+R2: Inverter | [Brand & Model & Serial Num] | 
+R3: Wifi Dongle (for 3 phase string inverter) | [Brand & Model & Serial Num] | 
+R4: Mounting Structure | [Brand & Model] | 
+R5: DC Cabling | [Brand & Model] | 
+R6: AC Cabling | [Brand & Model] | 
+R7: Earth Cabling | [Brand & Model] | 
+R8: Junction Box (for Micro Inverter System) | [Brand & Model] | 
+R9: Solar combiner box | [Brand & Model] | 
+R10: AC breakers | [Brand & Model] | 
+R11: AC SPD | [Brand & Model] | 
+R12: RCCB (for Micro Inverter System) | [Brand & Model] | 
+R13: Energy Meter | [Brand & Model] | 
+R14: Smart Meter | [Brand & Model] | 
+
+--- TABLE 2 ---
+R0: Installation Mount Photos
+R1: 1.Mounting Hooks and brackets (Hook bracket/L-feet)
+R2: 2.Photo of entire mounting layout
+
+--- TABLE 3 ---
+R0: Solar Panel Array Layout
+R1: 
+
+--- TABLE 4 ---
+R0: AC and DC Cable Route
+R1: Cable from PV array to Drop point (Cables on roof level)
+R2: Vertical Cable route (from drop point to inverter/combiner box)
+R3: Junction Box – (for microinverter only)
+R4: Combiner box to Premise DB
+
+--- TABLE 5 ---
+R0: Inverter/Combiner box
+R1: Zoom out view of Inverter with Combiner Box
+R2: Close up view of Inverter (applicable for String Inverter only)
+R3: AC output cables from String Inverter (Showing cable ferrule installed)
+R4: Microinverters- (for microinverter system only)
+
+--- TABLE 6 ---
+R0: Combiner Box
+R1: With cover on – (clear view of the labels of each component)
+R2: Without cover – clear view of components ratings, terminations, color coded AC wires.
+
+--- TABLE 7 ---
+R0: Interconnection Point at the Customer’s Distribution Board (DB)
+R1: Wide-angle view – clear view of the whole customer`s DB box.
+R2: Zoomed picture of the breaker with Solar termination point)- Solar cable labelled    Distinctive labe).
+R3: 
+
+--- TABLE 8 ---
+R0: Smart Meter (only for site with Smart meter)
+R1: Power and communication lines checklist
+R2: CT clamps pic showing direction of current flow arrow
+R3: CT clamp connection to CAT 6 cable
+R4: Connection Smart Meter terminals (input and output)
+
+--- TABLE 9 ---
+R0: Housekeeping at customer premise after installation completed.
+R1: 
+R2: 
+
+--- TABLE 10 ---
+R0: Cable Insulation Test | Cable Insulation Test | Cable Insulation Test | Cable Insulation Test | Cable Insulation Test | Cable Insulation Test | Cable Insulation Test
+R1: Test Point | Test Point | All cables | All cables | All cables | All cables | All cables
+R2: Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record
+R3: Testing is conducted on new cable installations to determine if the insulation has been damaged.  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Testing is conducted on new cable installations to determine if the insulation has been damaged.  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Testing is conducted on new cable installations to determine if the insulation has been damaged.  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Testing is conducted on new cable installations to determine if the insulation has been damaged.  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB  Isolate all cables except for inter-module connection and earthing cables. | Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB  Isolate all cables except for inter-module connection and earthing cables. | Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB  Isolate all cables except for inter-module connection and earthing cables.
+R4: No. | Cable from (Originating) | Cable to (Terminating) | Insulation Resistance  Value (M Ohms) | Insulation Resistance  Value (M Ohms) | Pass | Fail
+R5: No. | Cable from (Originating) | Cable to (Terminating) | Insulation Resistance  Value (M Ohms) | Insulation Resistance  Value (M Ohms) | (Please tick the relevant box) | (Please tick the relevant box)
+R6: For String Inverter System | For String Inverter System | For String Inverter System | For String Inverter System | For String Inverter System | For String Inverter System | For String Inverter System
+R7: 1 | PV String 1 (+) | MPPT Inverter |  |  |  | 
+R8: 2 | PV String 1 (-) | MPPT Inverter |  |  |  | 
+R9: 3 | PV String 2 (+) | MPPT Inverter |  |  |  | 
+R10: 4 | PV String 2 (-) | MPPT Inverter |  |  |  | 
+R11: 5 | Inverter | AC MCB |  |  |  | 
+R12: 6 | AC MCB | PV Meter |  |  |  | 
+R13: 7 | AC MCB | AC SPD |  |  |  | 
+R14: 8 | PV Meter | Load Main Breaker |  |  |  | 
+R15: For Micro Inverter System | For Micro Inverter System | For Micro Inverter System | For Micro Inverter System | For Micro Inverter System | For Micro Inverter System | For Micro Inverter System
+R16: 1 | PV Panels | Microinverter 1 |  |  |  | 
+R17: 2 | PV Panels | Microinverter 2 |  |  |  | 
+R18: 3 | PV Panels | Microinverter 3 |  |  |  | 
+R19: 4 | PV Panels | Microinverter 4 |  |  |  | 
+R20: 5 | PV Panels | Microinverter 5 |  |  |  | 
+R21: 6 | PV Panels | Microinverter 6 |  |  |  | 
+R22: 7 | PV Panels | Microinverter 7 |  |  |  | 
+R23: 8 | Junction Box | AC MCB |  |  |  | 
+R24: 9 | AC MCB | ELCB/RCCB |  |  |  | 
+R25: 10 | ELCB/RCCB | PV Meter |  |  |  | 
+R26: 11 | AC MCB | AC SPD |  |  |  | 
+R27: 12k | PV Meter | Load Main Breaker |  |  |  | 
+R28: Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs:
+
+--- TABLE 11 ---
+R0: String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test | String Open Circuit Voltage Test
+R1: Test Point | Test Point | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box
+R2: Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record
+R3: Test the continuity of each string | Test the continuity of each string | Test the continuity of each string | Test the continuity of each string | Test the continuity of each string | Test the continuity of each string | OK: | OK: | Not OK: | Not OK:
+R4: Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Determine the following: 1. Measured Open Circuit Voltage (Voc_mea) of each string. 2. Expected Open Circuit Voltage (Voc_exp) of each string. 3. % Difference between measured and expected Voc.  ACCEPT if  % difference of Voc (between measured Voc and expected Voc) with respect to expected Voc is within +/- 5% Voc measured of each string is less than the maximum input voltage of the inverter Polarity of all DC cables (string and array) is correct  Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Solar irradiance should be at least 350 Wm-2 when performing this test. Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test. Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test. Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test. Instructions: SWITCH OFF / DISCONNECT the following: - PV AC MCB
+R5: String No. | Voc of string at STC (V) | Voc of string at STC (V) | Voc measured (V) | Voc expected (V) | Measured module temp (oC) | Measured Irradiance (Wm-2) | % difference of Voc | % difference of Voc | Accept (A)  or  Reject (R)
+R6: 1 |  |  |  |  |  |  |  |  | 
+R7: 2 |  |  |  |  |  |  |  |  | 
+R8: 3 |  |  |  |  |  |  |  |  | 
+R9: 4 |  |  |  |  |  |  |  |  | 
+R10: 5 |  |  |  |  |  |  |  |  | 
+R11: Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs:
+
+--- TABLE 12 ---
+R0: DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test | DC Short Circuit Current Test
+R1: Test Point | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box | Solar Combiner Box
+R2: Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record
+R3: Using appropriate method, determine the following:  1. Measured short circuit current (Isc_mea) of each string  2. Expected short circuit current (Isc_exp) of each string  3. % Difference between measured and expected Isc.   ACCEPT if  % difference of Isc (between measured Isc_mea and expected Isc_exp) with respect to Isc_exp is within +/- 5%   Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Using appropriate method, determine the following:  1. Measured short circuit current (Isc_mea) of each string  2. Expected short circuit current (Isc_exp) of each string  3. % Difference between measured and expected Isc.   ACCEPT if  % difference of Isc (between measured Isc_mea and expected Isc_exp) with respect to Isc_exp is within +/- 5%   Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Using appropriate method, determine the following:  1. Measured short circuit current (Isc_mea) of each string  2. Expected short circuit current (Isc_exp) of each string  3. % Difference between measured and expected Isc.   ACCEPT if  % difference of Isc (between measured Isc_mea and expected Isc_exp) with respect to Isc_exp is within +/- 5%   Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Using appropriate method, determine the following:  1. Measured short circuit current (Isc_mea) of each string  2. Expected short circuit current (Isc_exp) of each string  3. % Difference between measured and expected Isc.   ACCEPT if  % difference of Isc (between measured Isc_mea and expected Isc_exp) with respect to Isc_exp is within +/- 5%   Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Using appropriate method, determine the following:  1. Measured short circuit current (Isc_mea) of each string  2. Expected short circuit current (Isc_exp) of each string  3. % Difference between measured and expected Isc.   ACCEPT if  % difference of Isc (between measured Isc_mea and expected Isc_exp) with respect to Isc_exp is within +/- 5%   Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly. | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB
+R4: No. String No. | Solar irradianc (Wm-2) | Measured module temp (oC) | Measured Isc of string (A) | Expected Isc of String (A) | Expected Isc of String (A) | % difference of Isc | Accept (A) or Reject (R)
+R5:  |  |  |  |  |  |  | 
+R6:  |  |  |  |  |  |  | 
+R7:  |  |  |  |  |  |  | 
+R8:  |  |  |  |  |  |  | 
+R9: Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs:
+
+--- TABLE 13 ---
+R0: Isolation Device Functional Test | Isolation Device Functional Test | Isolation Device Functional Test | Isolation Device Functional Test | Isolation Device Functional Test | Isolation Device Functional Test
+R1: Test Point | Test Point | All breakers and switches | All breakers and switches | All breakers and switches | All breakers and switches
+R2: Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record
+R3: Please tick in the appropriate box       Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly | Please tick in the appropriate box       Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB | Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH OFF / DISCONNECT the following: PV AC MCB
+R4: No. | Description | Description | Accept | Reject | Note
+R5: 1 | Confirm voltage is NOT present at the outgoing terminal of PV AC MCB when the switch is in OFF position | Confirm voltage is NOT present at the outgoing terminal of PV AC MCB when the switch is in OFF position |  |  | 
+R6: 2 | Confirm voltage is present at the outgoing terminal of PV AC MCB when the switch is in ON position | Confirm voltage is present at the outgoing terminal of PV AC MCB when the switch is in ON position |  |  | 
+R7: Photographs: | Photographs: | Photographs: | Photographs: | Photographs: | Photographs:
+
+--- TABLE 14 ---
+R0: Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test | Inverter Functional Test
+R1: Test Point | Test Point | Test Point | Test Point | Inverter | Inverter | Inverter | Inverter | Inverter
+R2: Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record | Use appropriate tools to measure and record
+R3: Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly | Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly | Notes: Mandatory for all test on-site photographs to be attached and labelled accordingly | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter | Please tick in the appropriate box  Solar irradiance should be at least 350 Wm-2 when performing this test.  Instructions: SWITCH ON the system and ensure that the inverter is operating.  CAUTION: Before switching on the inverter, make sure Voc measured at the inverter input terminal must be LESS THAN the maximum allowable input DC voltage of the inverter
+R4: No. | Description | Description | Description | Description | Value | Accept | Reject | Reasons
+R5: 1 | Check whether the measured DC voltage falls within the allowable MPPT voltage range of the inverter. (Only for String Inverter ) | Check whether the measured DC voltage falls within the allowable MPPT voltage range of the inverter. (Only for String Inverter ) | Check whether the measured DC voltage falls within the allowable MPPT voltage range of the inverter. (Only for String Inverter ) | Check whether the measured DC voltage falls within the allowable MPPT voltage range of the inverter. (Only for String Inverter ) |  |  |  | 
+R6: 2 | Check whether the measured Grid Phase Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Phase Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Phase Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Phase Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) |  |  |  | 
+R7:  | L1 to N | L1 to N | L1 to N | L1 to N |  |  |  | 
+R8:  | L2 to N | L2 to N | L2 to N | L2 to N |  |  |  | 
+R9:  | L3 to N | L3 to N | L3 to N | L3 to N |  |  |  | 
+R10: 3 | Check whether the measured Grid Line Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Line Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Line Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) | Check whether the measured Grid Line Voltage are within the acceptable limit. (Single Phase - 243V max / 216V min) (Three Phase – 440V max / 376V min) |  |  |  | 
+R11:  | L1 to l2 | L1 to l2 | L1 to l2 | L1 to l2 |  |  |  | 
+R12:  | L2 to L3 | L2 to L3 | L2 to L3 | L2 to L3 |  |  |  | 
+R13:  | L1 to L3 | L1 to L3 | L1 to L3 | L1 to L3 |  |  |  | 
+R14: 4 | Check whether the voltage of Phase to Earth are within the acceptable limit. (Single Phase - 216V to 253V) (Three Phase – 216V to 253V per phase) | Check whether the voltage of Phase to Earth are within the acceptable limit. (Single Phase - 216V to 253V) (Three Phase – 216V to 253V per phase) | Check whether the voltage of Phase to Earth are within the acceptable limit. (Single Phase - 216V to 253V) (Three Phase – 216V to 253V per phase) | Check whether the voltage of Phase to Earth are within the acceptable limit. (Single Phase - 216V to 253V) (Three Phase – 216V to 253V per phase) |  |  |  | 
+R15:  | L1 to E | L1 to E | L1 to E | L1 to E |  |  |  | 
+R16:  | L2 to E | L2 to E | L2 to E | L2 to E |  |  |  | 
+R17:  | L3 to E | L3 to E | L3 to E | L3 to E |  |  |  | 
+R18: 5 | Check whether the voltage of Neutral to Earth are within the acceptable limit. | Check whether the voltage of Neutral to Earth are within the acceptable limit. | Check whether the voltage of Neutral to Earth are within the acceptable limit. | Check whether the voltage of Neutral to Earth are within the acceptable limit. |  |  |  | 
+R19: 5 | Condition | Acceptable NEV | Acceptable NEV | Acceptable NEV |  |  |  | 
+R20: 5 | Normal Operation | < 3V | < 3V | < 3V |  |  |  | 
+R21: 5 | Best Practice range | 0.5V to 2V | 0.5V to 2V | 0.5V to 2V |  |  |  | 
+R22: 5 | Warning Threshold | > 3V - investigate | > 3V - investigate | > 3V - investigate |  |  |  | 
+R23: 5 | Critical concern | > 5V – unsafe, must be rectified | > 5V – unsafe, must be rectified | > 5V – unsafe, must be rectified |  |  |  | 
+R24: Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5) | Photographs for each test ( 1 to 5)
+
+--- TABLE 15 ---
+R0: Applicant Name (System Installer): | Applicant Name (System Installer):
+R1: Site PIC Name (at site):  IC/Passport No.: | Mobile No.:
+R2: Company Name (Main Vendor/Contractor): | Sub-Contractor/Vendor name: (if applicable)
+R3: Project: GCPV system installation | Work description:
+R4: LRD/Address: (ensure same with PART A site info) | Work Area/Room:  Rooftop : Front porch : DB room :
+R5: Permit duration: Start date                                     End date: | Permit duration: Start date                                     End date:
+R6: Request by (Maxis): | Mobile No:
+
+--- TABLE 16 ---
+R0: No | Description | Phone No. | Remark
+R1: 1 | Local Hospital |  | 
+R2: 2 | Nearest Clinic |  | 
+R3: 3 | Nearest BOMBA |  | 
+R4: 4 | Nearest Polis station |  | 
+R5: 5 | HSE/Safety Officer/Site Safety Supervisor |  | 
+R6: 6 | Main Office No. |  | 
+R7:  |  |  | 
+
+--- TABLE 17 ---
+R0: No | Name | Toolbox  day 1 | Toolbox day 2 (if installation extended beyin 1 day)(
+R1: 1 |  |  | 
+R2: 2 |  |  | 
+R3: 3 |  |  | 
+R4: 4 |  |  | 
+R5: 5 |  |  | 
+R6:  |  |  | 
+
+--- TABLE 18 ---
+R0: No | Name | CIDB | WAH | NTMSP | Valid Work Permit (foreign workers) | Signature
+R1: 1. |  | Ref: Expiry date: Photo | Ref: Expiry date Photo | Ref: Expiry date Photo |  | 
+R2: 2. |  | Ref: Expiry date: Photo | Ref: Expiry date Photo | Ref: Expiry date Photo |  | 
+R3: 3. |  | Ref: Expiry date: Photo | Ref: Expiry date Photo | Ref: Expiry date Photo |  | 
+R4: 4. |  | Ref: Expiry date: Photo | Ref: Expiry date Photo | Ref: Expiry date Photo |  | 
+R5: 5. |  | Ref: Expiry date: Photo | Ref: Expiry date Photo | Ref: Expiry date Photo |  | 
+
+--- TABLE 19 ---
+R0: Site Toolbox Meeting & Safety Briefing
+R1: 
+R2: PPE Compliance Photo
+R3: 
+
+--- TABLE 20 ---
+R0: Equipment Inspection
+R1: 
+R2: Sky lift Photos
+R3: 
+
+--- TABLE 21 ---
+R0: Person in charge name: | Mobile No.:
+R1: Lifting method: (refer to lifting procedure) | 
+R2: Lifting material description: (Install or remove) | Estimated weight:
+R3: Height: | 
+
+--- TABLE 22 ---
+R0: No | Description (Lifting equipment) | Yes | No | Remark
+R1:  | Pulley |  |  | 
+R2:  | Sling |  |  | 
+R3:  | Connector/Shackle |  |  | 
+R4:  | Hook |  |  | Safety ledge available/function
+R5:  | Rope/Cable |  |  | 
+R6:  | Hoist assistance (Descender/etc) |  |  | 
+R7:  |  |  |  | 
+
+--- TABLE 23 ---
+R0: No | Description | Yes | No | Remark
+R1:  | PMA No & validity |  |  | PMA No: Reg No: Expiry date:
+R2:  | Out rigger |  |  | 
+R3:  | Out rigger plate/ground stability |  |  | 
+R4:  | Hydraulic system |  |  | 
+R5:  | Work area protection |  |  | Cone, signage, light, blinker
+R6:  | Operator PPE’s |  |  | 
+R7:  | Skylift bucket |  |  | For skylift
+R8:  |  |  |  | 
+R9:  |  |  |  | 
+
+--- TABLE 24 ---
+R0: No | Description | Yes | No | Remark
+R1: 1. | ELCB/Circuit breaker |  |  | 
+R2: 2. | Competence person |  |  | Wireman/Chargeman
+R3: 3. | PPE |  |  | Electrical glove
+R4: 4. | LOTO |  |  | 
+
+--- TABLE 25 ---
+R0: No | Description | Yes | No | Remark
+R1: 1. | Fire blanket (if applicable) |  |  | 
+R2: 2. | Observer (fire watcher) |  |  | 
+R3:  |  |  |  | 
+R4:  |  |  |  | 
+
+--- TABLE 26 ---
+R0: No | Description | Yes | No | Remark
+R1: 1. | Portable fire extinguisher |  |  | 
+R2: 2. | First Aid box |  |  | 
+R3: 3. | Safety Signage |  |  | 
+R4: 4. | Barricade tape (if applicable) |  |  | 
+R5: 5. | Safety Cone/Safety Signboard |  |  | 
+R6: 6. | Ear Protection |  |  | 
+R7: 7. | Eye protection |  |  | 
+R8: 8. | Hand protection |  |  | 
+R9: 9. | Other machinery |  |  | 
+R10: 10. |  |  |  | 
+R11:  |  |  |  | 
+
+--- TABLE 27 ---
+R0:  | Toolbox content |  | Toolbox content
+R1:  | Electrical Safety |  | Lifting operation
+R2:  | Working at Height |  | Housekeeping
+R3:  | Manual handling |  | 
+R4:  | Fire Safety |  | Hazard
+R5:  | PPE usage |  | Emergency Response
+R6:  | Hand tools |  | 
+R7:  | Power tools |  | 
+R8:  | Chemical |  | 
+R9:  |  |  | 
+R10:  |  |  | 
+
+--- TABLE 28 ---
+R0: Required PPE |  | 
+R1: Sequence of Basic Job Steps | Potential Hazards | Recommended Action or Procedure
+R2:  |  | 
+R3:  |  | 
+R4:  |  | 
+R5:  |  | 
+R6:  |  | 
+
+--- TABLE 29 ---
+R0: Prepared by | Prepared by | Prepared by | Verified and Accepted by | Verified and Accepted by | Verified and Accepted by
+R1: Signature | : |  | Signature | : | 
+R2: Name | : |  | Name | : | 
+R3: Position | : |  | Position | : | 
+R4: Company | : |  | Company | : | 
+R5: Date | : |  | Date | : | 
