@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     // Send email
     if (process.env.RESEND_API_KEY) {
         try {
-            await resend.emails.send({
+            const { data, error } = await resend.emails.send({
                 from: 'AI Solar OS <onboarding@resend.dev>',
                 to: email,
                 subject: 'Password Reset Verification Code',
@@ -57,8 +57,16 @@ export async function POST(req: Request) {
                     <p>This code will expire in 15 minutes.</p>
                 `
             });
+            
+            if (error) {
+                console.error("Resend API returned an error:", error);
+                return NextResponse.json(
+                    { error: error.message || "Failed to send email. Resend blocked the delivery." },
+                    { status: 403 }
+                );
+            }
         } catch (emailErr) {
-            console.error("Failed to send email via Resend:", emailErr);
+            console.error("Failed to execute Resend SDK:", emailErr);
             return NextResponse.json(
                 { error: "Failed to send verification email. Please contact support." },
                 { status: 500 }
